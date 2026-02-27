@@ -1,9 +1,5 @@
 name: Release
 
-# 사용법:
-#   git tag v1.1.0 -m "문제 5개 추가"
-#   git push origin v1.1.0
-#
 # 버전 규칙 (Semantic Versioning):
 #   MAJOR (v2.0.0) — 아키텍처 개편 등 호환 불가 변경
 #   MINOR (v1.1.0) — 새 기능 추가, 문제 추가
@@ -24,13 +20,14 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # GitHub Release 생성 + CHANGELOG.md 커밋
+      contents: write
+      pull-requests: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 전체 커밋 히스토리 필요 (git-cliff)
+          fetch-depth: 0
 
       # ── CHANGELOG.md 전체 재생성 ────────────────────────────────
       - name: Generate full CHANGELOG.md
