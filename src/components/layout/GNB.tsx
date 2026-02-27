@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
+import UserMenu from "@/components/auth/UserMenu";
 
 export default function GNB() {
   return (
@@ -28,6 +29,7 @@ export default function GNB() {
             문제 기여하기
           </a>
           <ThemeToggle />
+          <UserMenu />
         </div>
       </nav>
     </header>

@@ -5,6 +5,7 @@ import type { Problem } from "@/types/problem";
 import MarkdownEditor from "./MarkdownEditor";
 import CopyPromptButton from "./CopyPromptButton";
 import SolutionToggle from "./SolutionToggle";
+import MarkAsSolvedButton from "./MarkAsSolvedButton";
 
 export default function SolutionPanel({ problem }: { problem: Problem }) {
   const noteGetterRef = useRef<(() => string) | null>(null);
@@ -31,7 +32,12 @@ export default function SolutionPanel({ problem }: { problem: Problem }) {
           dataBlocks={problem.dataBlocks}
           getUserNote={getUserNote}
         />
-        <SolutionToggle solutionHtml={problem.solutionHtml} />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <SolutionToggle solutionHtml={problem.solutionHtml} />
+          </div>
+        </div>
+        <MarkAsSolvedButton problemId={problem.id} />
       </div>
     </div>
   );

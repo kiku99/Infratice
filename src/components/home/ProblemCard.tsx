@@ -1,6 +1,17 @@
 import Link from "next/link";
 import { CATEGORY_META, type ProblemMeta } from "@/types/problem";
 
+function SolvedBadge() {
+  return (
+    <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-600 dark:text-emerald-400">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3">
+        <path fillRule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
+      </svg>
+      완료
+    </span>
+  );
+}
+
 function DifficultyStars({ level }: { level: number }) {
   return (
     <span className="flex gap-0.5" aria-label={`난이도 ${level}`}>
@@ -27,7 +38,13 @@ function DifficultyStars({ level }: { level: number }) {
   );
 }
 
-export default function ProblemCard({ problem }: { problem: ProblemMeta }) {
+export default function ProblemCard({
+  problem,
+  solved = false,
+}: {
+  problem: ProblemMeta;
+  solved?: boolean;
+}) {
   const meta = CATEGORY_META[problem.category];
   const number = problem.slug.split("-")[0];
 
@@ -42,9 +59,12 @@ export default function ProblemCard({ problem }: { problem: ProblemMeta }) {
         >
           {meta.label}
         </span>
-        <span className="font-mono text-xs text-slate-400 dark:text-slate-600">
-          #{number}
-        </span>
+        <div className="flex items-center gap-2">
+          {solved && <SolvedBadge />}
+          <span className="font-mono text-xs text-slate-400 dark:text-slate-600">
+            #{number}
+          </span>
+        </div>
       </div>
 
       <h3 className="mb-3 flex-1 text-sm font-semibold leading-snug text-slate-900 group-hover:text-emerald-600 dark:text-slate-200 dark:group-hover:text-emerald-400">

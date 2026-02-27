@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "@uiw/react-md-editor": "^4.0.11",
     "gray-matter": "^4.0.3",
     "next": "^16.1.6",

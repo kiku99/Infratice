@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import ProblemCard from "@/components/home/ProblemCard";
 import { CATEGORY_META, type Category, type ProblemMeta } from "@/types/problem";
+import { useAuth } from "@/contexts/AuthContext";
 
 type SortKey = "id" | "difficulty";
 type SortDir = "asc" | "desc";
@@ -32,6 +33,7 @@ function SortIcon({ dir }: { dir: SortDir }) {
 }
 
 export default function ProblemListClient({ problems }: { problems: ProblemMeta[] }) {
+  const { solvedIds } = useAuth();
   const [category, setCategory] = useState<FilterCategory>(ALL);
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
@@ -136,7 +138,7 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
       {filtered.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
-            <ProblemCard key={p.id} problem={p} />
+            <ProblemCard key={p.id} problem={p} solved={solvedIds.has(p.id)} />
           ))}
         </div>
       ) : (
