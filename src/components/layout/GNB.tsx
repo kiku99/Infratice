@@ -14,7 +14,7 @@ export default function GNB() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <Link
-            href="/"
+            href="/problems"
             className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           >
             문제 목록

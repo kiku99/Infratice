@@ -33,7 +33,7 @@ export default function HeroSection() {
 
         <div className="mt-10 flex items-center justify-center gap-4">
           <Link
-            href="#problems"
+            href="/problems"
             className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-600"
           >
             <span>문제 풀러가기</span>
