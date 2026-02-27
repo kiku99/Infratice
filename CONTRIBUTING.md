@@ -143,6 +143,25 @@ pnpm dev
 
 ---
 
-## 9. 문의
+## 9. 커밋 메시지 규칙
+
+릴리즈 시 CHANGELOG.md가 자동 생성됩니다. 아래 형식을 따르면 변경 이력이 올바르게 분류됩니다.
+
+```
+<타입>: <설명>
+```
+
+| 타입 | CHANGELOG 분류 | 예시 |
+|---|---|---|
+| `content` | 📚 문제 추가 | `content: K8s ImagePullBackOff 문제 추가` |
+| `feat` | ✨ 새 기능 | `feat: 문제 목록 필터 기능 추가` |
+| `fix` | 🐛 버그 수정 | `fix: 다크모드 bullet 렌더링 오류 수정` |
+| `perf` | ⚡ 성능 개선 | `perf: Shiki 싱글턴 캐싱 적용` |
+| `refactor` | ♻️ 리팩터링 | `refactor: content 파싱 로직 분리` |
+| `chore`, `ci`, `docs`, `style` | (CHANGELOG 미포함) | `chore: 의존성 업데이트` |
+
+---
+
+## 10. 문의
 
 문제 제안이나 기여 관련 질문은 [GitHub Issues](https://github.com/kiku99/Infratice/issues)를 통해 남겨주세요.

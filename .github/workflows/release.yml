@@ -1,0 +1,107 @@
+name: Release
+
+# 사용법:
+#   git tag v1.1.0 -m "문제 5개 추가"
+#   git push origin v1.1.0
+#
+# 버전 규칙 (Semantic Versioning):
+#   MAJOR (v2.0.0) — 아키텍처 개편 등 호환 불가 변경
+#   MINOR (v1.1.0) — 새 기능 추가, 문제 추가
+#   PATCH (v1.0.1) — 버그 수정, 오탈자 수정
+#
+# 컨벤셔널 커밋 예시:
+#   feat(content): K8s ImagePullBackOff 문제 추가
+#   feat: 문제 목록 필터 기능 추가
+#   fix: 다크모드 bullet 렌더링 오류 수정
+#   chore: 의존성 업데이트 (CHANGELOG에 포함 안 됨)
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # GitHub Release 생성 + CHANGELOG.md 커밋
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 전체 커밋 히스토리 필요 (git-cliff)
+
+      # ── CHANGELOG.md 전체 재생성 ────────────────────────────────
+      - name: Generate full CHANGELOG.md
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --verbose
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 최신 버전 릴리즈 노트만 추출 (GitHub Release 본문용) ──────
+      - name: Generate release notes (latest only)
+        id: cliff_latest
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --verbose --latest --strip all
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── CHANGELOG.md를 main에 커밋 ──────────────────────────────
+      - name: Commit and push CHANGELOG.md
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          if ! git diff --staged --quiet; then
+            git commit -m "docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]"
+            git push origin HEAD:main
+          else
+            echo "CHANGELOG.md unchanged, skipping commit"
+          fi
+
+      # ── 빌드 ────────────────────────────────────────────────────
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm tsc --noEmit
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      # ── Cloudflare Pages 프로덕션 배포 ──────────────────────────
+      - name: Deploy to Cloudflare Pages (Production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy out --project-name=infratice --branch=main --commit-dirty=true
+
+      # ── GitHub Release 생성 ──────────────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.cliff_latest.outputs.content }}
+          make_latest: true

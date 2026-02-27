@@ -1,0 +1,60 @@
+# git-cliff 설정 파일
+# https://git-cliff.org/docs/configuration
+
+[changelog]
+header = """
+# Changelog
+
+> 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
+> 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
+
+"""
+body = """
+{% if version %}\
+## [{{ version | trim_start_matches(pat="v") }}] — {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group }}
+{% for commit in commits | unique(attribute="message") %}
+- {{ commit.message | upper_first }}\
+  {% if commit.remote.pr_number %}\
+  ([#{{ commit.remote.pr_number }}]({{ self::remote_url() }}/pull/{{ commit.remote.pr_number }}))\
+  {% endif %}\
+  ([`{{ commit.id | truncate(length=7, end="") }}`]({{ self::remote_url() }}/commit/{{ commit.id }}))
+{%- endfor %}
+{% endfor %}\n
+"""
+trim = true
+footer = ""
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+split_commits = false
+commit_preprocessors = [
+  # 이슈/PR 번호를 링크로 변환
+  { pattern = '\(#([0-9]+)\)', replace = "([#${1}]({{ self::remote_url() }}/pull/${1}))" },
+]
+commit_parsers = [
+  # 문제 콘텐츠 추가 (content: ...)
+  { message = "^content", group = "📚 문제 추가" },
+  # 새 기능
+  { message = "^feat", group = "✨ 새 기능" },
+  # 버그 수정
+  { message = "^fix", group = "🐛 버그 수정" },
+  # 성능 개선
+  { message = "^perf", group = "⚡ 성능 개선" },
+  # 리팩터링
+  { message = "^refactor", group = "♻️  리팩터링" },
+  # 아래는 CHANGELOG에 포함하지 않음
+  { message = "^docs|^style|^test|^chore|^ci|^build", skip = true },
+  { message = "^Merge", skip = true },
+  # 위에 해당하지 않는 나머지
+  { body = ".*", group = "📦 기타" },
+]
+filter_commits = true
+tag_pattern = "v[0-9].*"
+sort_commits = "oldest"
+topo_order = false
