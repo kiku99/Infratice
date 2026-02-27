@@ -153,11 +153,11 @@ pnpm dev
 
 | 타입 | CHANGELOG 분류 | 예시 |
 |---|---|---|
-| `content` | 📚 문제 추가 | `content: K8s ImagePullBackOff 문제 추가` |
-| `feat` | ✨ 새 기능 | `feat: 문제 목록 필터 기능 추가` |
-| `fix` | 🐛 버그 수정 | `fix: 다크모드 bullet 렌더링 오류 수정` |
-| `perf` | ⚡ 성능 개선 | `perf: Shiki 싱글턴 캐싱 적용` |
-| `refactor` | ♻️ 리팩터링 | `refactor: content 파싱 로직 분리` |
+| `content` | 문제 추가 | `content: K8s ImagePullBackOff 문제 추가` |
+| `feat` | 새 기능 | `feat: 문제 목록 필터 기능 추가` |
+| `fix` | 버그 수정 | `fix: 다크모드 bullet 렌더링 오류 수정` |
+| `perf` | 성능 개선 | `perf: Shiki 싱글턴 캐싱 적용` |
+| `refactor` | 리팩터링 | `refactor: content 파싱 로직 분리` |
 | `chore`, `ci`, `docs`, `style` | (CHANGELOG 미포함) | `chore: 의존성 업데이트` |
 
 ---
