@@ -1,2 +1,16 @@
-> **이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.**  
-> 최신 변경 이력은 [GitHub Releases](../../releases)에서도 확인할 수 있습니다.
+# Changelog
+
+> 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
+> 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
+
+## [1.0.0] — 2026-02-27
+
+### ✨ 새 기능
+- Project setup ([`6d01828`](https://github.com/kiku99/Infratice/commit/6d01828c0f998bdd12d1327cf9c296a1f9a3a46b))
+- Add problems page ([`c914e26`](https://github.com/kiku99/Infratice/commit/c914e26c0ed8484f4f673437658cf86e0e81842d))
+- Set google login & OAuth ([`2b8e328`](https://github.com/kiku99/Infratice/commit/2b8e3282e22689a89942479f285469ecc169bb56))
+- Add github workflows ([`ed2727a`](https://github.com/kiku99/Infratice/commit/ed2727a309cd7ee875b067aea989057c10d870ba))
+- Add 002-imagepullbackoff.md ([`3aecc00`](https://github.com/kiku99/Infratice/commit/3aecc009f35abd0286e11fd9b529777506bf9d26))
+
+
+
