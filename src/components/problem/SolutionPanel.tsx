@@ -21,7 +21,7 @@ export default function SolutionPanel({ problem }: { problem: Problem }) {
   return (
     <div className="flex h-full flex-col overflow-hidden p-5 sm:p-6">
       {/* editor */}
-      <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col">
         <MarkdownEditor problemId={problem.id} onNoteRef={handleNoteRef} />
       </div>
 
