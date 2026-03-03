@@ -51,7 +51,11 @@ export default function ProblemCard({
   return (
     <Link
       href={`/problems/${problem.category}/${problem.slug}`}
-      className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 transition-all hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/5 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-emerald-500/30"
+      className={`group relative flex flex-col rounded-xl border p-5 transition-all hover:shadow-lg ${
+        solved
+          ? "border-emerald-300/60 bg-emerald-50/50 hover:border-emerald-400 hover:shadow-emerald-500/5 dark:border-emerald-500/20 dark:bg-emerald-950/20 dark:hover:border-emerald-500/40"
+          : "border-slate-200 bg-white hover:border-emerald-500/40 hover:shadow-emerald-500/5 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-emerald-500/30"
+      }`}
     >
       <div className="mb-3 flex items-center justify-between">
         <span
@@ -67,7 +71,11 @@ export default function ProblemCard({
         </div>
       </div>
 
-      <h3 className="mb-3 flex-1 text-sm font-semibold leading-snug text-slate-900 group-hover:text-emerald-600 dark:text-slate-200 dark:group-hover:text-emerald-400">
+      <h3 className={`mb-3 flex-1 text-sm font-semibold leading-snug ${
+        solved
+          ? "text-slate-500 group-hover:text-emerald-600 dark:text-slate-400 dark:group-hover:text-emerald-400"
+          : "text-slate-900 group-hover:text-emerald-600 dark:text-slate-200 dark:group-hover:text-emerald-400"
+      }`}>
         {problem.title}
       </h3>
 
