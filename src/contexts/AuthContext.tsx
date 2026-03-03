@@ -40,20 +40,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false); // auth 확인 즉시 로딩 해제 — solved 조회와 분리
-      if (session?.user) {
-        setSolvedIds(await fetchSolvedIds(session.user.id));
-      }
-    });
-
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      setLoading(false);
+
       if (session?.user) {
-        setSolvedIds(await fetchSolvedIds(session.user.id));
+        fetchSolvedIds(session.user.id).then(setSolvedIds);
       } else {
         setSolvedIds(new Set());
       }
@@ -73,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSolvedIds((prev) => new Set([...prev, problemId]));
       } catch (e) {
         console.error("[markSolved]", e);
-        throw e; // 호출부에서 catch 가능하도록 re-throw
+        throw e;
       }
     },
     [user],
