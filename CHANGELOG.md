@@ -3,6 +3,16 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.0.4] — 2026-03-03
+
+### ✨ 새 기능
+- Add sorting by difficulty ([`75a18d8`](https://github.com/kiku99/Infratice/commit/75a18d8aff2a8bf6df4f26267636e030c0bb53d5))
+
+
+### 🐛 버그 수정
+- Login issues when refreshing ([`503a283`](https://github.com/kiku99/Infratice/commit/503a2831f009e3b0206ddd27407db4d58eaedb6c))
+
+
 ## [1.0.0] — 2026-02-27
 
 ### ✨ 새 기능
