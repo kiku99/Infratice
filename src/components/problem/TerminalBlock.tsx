@@ -49,7 +49,7 @@ export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900 dark:border-slate-700 dark:bg-[#0d1117]">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-slate-700 bg-slate-900 dark:border-slate-700 dark:bg-[#0d1117]">
       {/* title bar */}
       <div className="flex items-center gap-2 border-b border-slate-700 bg-slate-800 px-3 py-2 dark:bg-[#161b22]">
         <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
@@ -91,7 +91,7 @@ export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
       </div>
 
       {/* code area */}
-      <div className="terminal-scrollbar max-h-80 overflow-auto p-4">
+      <div className="terminal-scrollbar min-h-0 flex-1 overflow-auto p-4">
         <div
           className="font-mono text-sm leading-relaxed"
           dangerouslySetInnerHTML={{ __html: active.highlightedHtml }}

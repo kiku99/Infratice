@@ -7,9 +7,9 @@ export default function ScenarioPanel({ problem }: { problem: Problem }) {
   const number = problem.slug.split("-")[0];
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-5 sm:p-6">
+    <div className="flex h-full flex-col overflow-hidden p-5 sm:p-6">
       {/* header */}
-      <div className="mb-5">
+      <div className="mb-5 shrink-0">
         <div className="mb-2 flex items-center gap-2">
           <span
             className={`rounded-md px-2 py-0.5 text-xs font-semibold ${meta.color} ${meta.bgColor}`}
@@ -24,7 +24,7 @@ export default function ScenarioPanel({ problem }: { problem: Problem }) {
       </div>
 
       {/* scenario */}
-      <div className="mb-6">
+      <div className="mb-6 shrink-0">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
           상황
         </h2>
@@ -36,8 +36,8 @@ export default function ScenarioPanel({ problem }: { problem: Problem }) {
 
       {/* data */}
       {problem.dataBlocks.length > 0 && (
-        <div className="mb-6">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="flex min-h-0 flex-1 flex-col">
+          <h2 className="mb-3 shrink-0 text-xs font-semibold uppercase tracking-wider text-slate-500">
             제공 데이터
           </h2>
           <TerminalBlock blocks={problem.dataBlocks} />
@@ -45,7 +45,7 @@ export default function ScenarioPanel({ problem }: { problem: Problem }) {
       )}
 
       {/* hints */}
-      <div className="mt-auto pt-4">
+      <div className="shrink-0 pt-4">
         <HintAccordion hints={problem.hints} />
       </div>
     </div>
