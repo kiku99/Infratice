@@ -19,7 +19,9 @@ export default async function HomePage() {
 
         {categories.map((cat) => {
           const meta = CATEGORY_META[cat as Category];
-          const catProblems = problems.filter((p) => p.category === cat);
+          const catProblems = problems
+            .filter((p) => p.category === cat)
+            .sort((a, b) => a.difficulty - b.difficulty);
           return (
             <div key={cat} className="mb-10">
               <h3
