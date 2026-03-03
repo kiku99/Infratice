@@ -3,6 +3,19 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.1.0] — 2026-03-03
+
+### ✨ 새 기능
+- Allow users to unmark a problem as solved ([`7d4e587`](https://github.com/kiku99/Infratice/commit/7d4e58770f77fd106db87958999cbda5e965dc39))
+- Make solution note editor fill available height ([`7a4467a`](https://github.com/kiku99/Infratice/commit/7a4467a2265d2abb2114885d3bb245e59d00020e))
+- Make data blocks panel fill available height ([`48f14be`](https://github.com/kiku99/Infratice/commit/48f14beafbca5166363485b17870edbeda2567b1))
+- Visually distinguish solved problem cards in the list ([`80c2fce`](https://github.com/kiku99/Infratice/commit/80c2fceb6e470451161afbe4bdca5c8cf6af50ef))
+
+
+### 🐛 버그 수정
+- Update note editor label and placeholder text ([`103439e`](https://github.com/kiku99/Infratice/commit/103439e49808ad335a7629b5821e701bb56d4cc8))
+
+
 ## [1.0.4] — 2026-03-03
 
 ### ✨ 새 기능
