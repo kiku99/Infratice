@@ -15,6 +15,7 @@ interface AuthContextType {
   loading: boolean;
   solvedIds: Set<string>;
   markSolved: (problemId: string) => Promise<void>;
+  unmarkSolved: (problemId: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -62,11 +63,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const { error } = await supabase
           .from("solved_problems")
-          .upsert({ user_id: user.id, problem_id: problemId });
+          .upsert(
+            { user_id: user.id, problem_id: problemId },
+            { onConflict: "user_id,problem_id" },
+          );
         if (error) throw error;
         setSolvedIds((prev) => new Set([...prev, problemId]));
       } catch (e) {
         console.error("[markSolved]", e);
+        throw e;
+      }
+    },
+    [user],
+  );
+
+  const unmarkSolved = useCallback(
+    async (problemId: string) => {
+      if (!user) return;
+      try {
+        const { error } = await supabase
+          .from("solved_problems")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("problem_id", problemId);
+        if (error) throw error;
+        setSolvedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(problemId);
+          return next;
+        });
+      } catch (e) {
+        console.error("[unmarkSolved]", e);
         throw e;
       }
     },
@@ -86,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, solvedIds, markSolved, signInWithGoogle, signOut }}
+      value={{ user, loading, solvedIds, markSolved, unmarkSolved, signInWithGoogle, signOut }}
     >
       {children}
     </AuthContext.Provider>
