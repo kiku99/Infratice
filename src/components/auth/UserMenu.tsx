@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function UserMenu() {
@@ -98,6 +99,18 @@ export default function UserMenu() {
               </span>
             </div>
           </div>
+
+          {/* profile link */}
+          <Link
+            href="/profile"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 px-4 py-3 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+              <path d="M16.555 5.412a8.028 8.028 0 0 0-3.503-2.81 14.899 14.899 0 0 1 1.663 4.472 8.547 8.547 0 0 0 1.84-1.662ZM13.326 7.825a13.43 13.43 0 0 0-2.413-5.773 8.087 8.087 0 0 0-1.826 0 13.43 13.43 0 0 0-2.413 5.773A8.473 8.473 0 0 0 10 8.5c1.18 0 2.304-.24 3.326-.675ZM6.514 9.376A9.98 9.98 0 0 0 10 10c1.226 0 2.4-.22 3.486-.624a13.54 13.54 0 0 1 .351 3.759 13.54 13.54 0 0 1-7.674 0 13.538 13.538 0 0 1 .351-3.759ZM5.285 7.074a14.9 14.9 0 0 1 1.663-4.471 8.028 8.028 0 0 0-3.503 2.81c.529.638 1.149 1.199 1.84 1.66ZM17.334 6.798a7.973 7.973 0 0 1 .614 4.115 13.47 13.47 0 0 1-3.178 1.72 15.093 15.093 0 0 0-.174-3.939 10.043 10.043 0 0 0 2.738-1.896ZM2.666 6.798a10.042 10.042 0 0 0 2.738 1.896 15.097 15.097 0 0 0-.174 3.94 13.472 13.472 0 0 1-3.178-1.72 7.973 7.973 0 0 1 .614-4.116ZM4.309 14.588a15.088 15.088 0 0 0 5.691 1.91 15.088 15.088 0 0 0 5.691-1.91 7.996 7.996 0 0 1-11.382 0Z" />
+            </svg>
+            내 풀이 현황
+          </Link>
 
           {/* logout */}
           <button
