@@ -3,6 +3,23 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.2.0] — 2026-03-04
+
+### ✨ 새 기능
+- Limit home page to 6 problems per category ([`323b4d6`](https://github.com/kiku99/Infratice/commit/323b4d68ae9293d94a65a213a855f3964c408f39))
+
+
+### 🐛 버그 수정
+- Persist filter state on back navigation and fix TerminalBlock title bar layout ([`93bd94e`](https://github.com/kiku99/Infratice/commit/93bd94ebd41cc565c068656410aab68a143c6d82))
+- Remove difficulty sort from home page category problem list ([`69350bf`](https://github.com/kiku99/Infratice/commit/69350bfc0b9d6876f4ae777885fa65f207fd9830))
+- Allow solution panel to scroll with page when model answer is long ([`7517fec`](https://github.com/kiku99/Infratice/commit/7517fecd0ba5ea501d8ced600611a82e302019bc))
+
+
+### 📦 기타
+- K8s 카테고리 문제(003 ~ 023) 추가 ([`8d273ae`](https://github.com/kiku99/Infratice/commit/8d273aef6acb088a8211ac5854ba12816a8b3539))
+- Cicd, network, linux 카테고리 문제 추가 ([`32fc633`](https://github.com/kiku99/Infratice/commit/32fc633a054b32e4172557988c4d7a7f1420024f))
+
+
 ## [1.1.1] — 2026-03-04
 
 ### 🐛 버그 수정
