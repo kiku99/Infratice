@@ -3,6 +3,12 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.1.1] — 2026-03-04
+
+### 🐛 버그 수정
+- Make data block height expand dynamically instead of always filling ([`9f9c03a`](https://github.com/kiku99/Infratice/commit/9f9c03ae90b09f095d47366d2bef9afd271c6ed1))
+
+
 ## [1.1.0] — 2026-03-03
 
 ### ✨ 새 기능
