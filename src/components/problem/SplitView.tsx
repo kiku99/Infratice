@@ -12,7 +12,7 @@ export default function SplitView({
         {left}
       </div>
       {/* right pane */}
-      <div className="flex flex-col lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:w-1/2">{right}</div>
+      <div className="flex flex-col lg:min-h-[calc(100vh-3.5rem)] lg:w-1/2">{right}</div>
     </div>
   );
 }
