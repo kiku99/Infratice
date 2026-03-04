@@ -63,20 +63,31 @@ pre.shiki code {
   font-size: 0.8125rem;
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
-  background: var(--color-slate-700, #334155);
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+:where(.dark, .dark *) .prose-problem code {
+  background: #334155;
+  color: #e2e8f0;
 }
 
 .prose-problem pre {
   margin: 0.75rem 0;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  background: var(--color-slate-800, #1e293b);
+  background: #f1f5f9;
   overflow-x: auto;
+}
+
+:where(.dark, .dark *) .prose-problem pre {
+  background: #1e293b;
 }
 
 .prose-problem pre code {
   padding: 0;
   background: transparent;
+  color: inherit;
 }
 
 .prose-problem ul,
