@@ -3,6 +3,18 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.3.0] — 2026-03-04
+
+### ✨ 새 기능
+- Add FNB ([`717c796`](https://github.com/kiku99/Infratice/commit/717c79613cda0a6f18017d71f4be3713a42a4829))
+- Add profile page with category-based progress tracker ([`9dc4b55`](https://github.com/kiku99/Infratice/commit/9dc4b552a04b365c7bf23118c3bbfb9a1d6bc0cd))
+
+
+### 🐛 버그 수정
+- Improve prose code block visibility in light mode ([`5f87989`](https://github.com/kiku99/Infratice/commit/5f879893f412f52ea8537496355625008c7363d1))
+- Update font size ([`b2ea19b`](https://github.com/kiku99/Infratice/commit/b2ea19b0f07077c987039e0cabfe0bbd6175da62))
+
+
 ## [1.2.0] — 2026-03-04
 
 ### ✨ 새 기능
