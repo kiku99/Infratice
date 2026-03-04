@@ -23,8 +23,7 @@ export default async function HomePage() {
         {categories.map((cat) => {
           const meta = CATEGORY_META[cat as Category];
           const catProblems = problems
-            .filter((p) => p.category === cat)
-            .sort((a, b) => a.difficulty - b.difficulty);
+            .filter((p) => p.category === cat);
           const preview = catProblems.slice(0, PREVIEW_LIMIT);
           const hasMore = catProblems.length > PREVIEW_LIMIT;
           return (
