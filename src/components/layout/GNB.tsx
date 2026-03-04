@@ -8,7 +8,7 @@ export default function GNB() {
       <nav className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight text-slate-900 dark:text-white"
+          className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
         >
           Infratice
         </Link>
