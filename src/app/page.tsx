@@ -1,7 +1,10 @@
+import Link from "next/link";
 import HeroSection from "@/components/home/HeroSection";
 import ProblemCard from "@/components/home/ProblemCard";
 import { getAllProblems } from "@/lib/content";
 import { CATEGORY_META, type Category } from "@/types/problem";
+
+const PREVIEW_LIMIT = 6;
 
 export default async function HomePage() {
   const problems = await getAllProblems();
@@ -22,15 +25,25 @@ export default async function HomePage() {
           const catProblems = problems
             .filter((p) => p.category === cat)
             .sort((a, b) => a.difficulty - b.difficulty);
+          const preview = catProblems.slice(0, PREVIEW_LIMIT);
+          const hasMore = catProblems.length > PREVIEW_LIMIT;
           return (
             <div key={cat} className="mb-10">
-              <h3
-                className={`mb-4 text-sm font-semibold uppercase tracking-wider ${meta.color}`}
-              >
-                {meta.label}
-              </h3>
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className={`text-sm font-semibold uppercase tracking-wider ${meta.color}`}>
+                  {meta.label}
+                </h3>
+                {hasMore && (
+                  <Link
+                    href={`/problems?category=${cat}`}
+                    className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  >
+                    전체 보기 ({catProblems.length}) →
+                  </Link>
+                )}
+              </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {catProblems.map((p) => (
+                {preview.map((p) => (
                   <ProblemCard key={p.id} problem={p} />
                 ))}
               </div>
