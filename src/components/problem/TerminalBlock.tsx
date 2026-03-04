@@ -52,12 +52,14 @@ export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
     <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900 dark:border-slate-700 dark:bg-[#0d1117]">
       {/* title bar */}
       <div className="flex items-center gap-2 border-b border-slate-700 bg-slate-800 px-3 py-2 dark:bg-[#161b22]">
-        <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-        <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-        <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+          <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+          <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+        </div>
 
         {/* tabs */}
-        <div className="ml-3 flex gap-1">
+        <div className="ml-1 flex min-w-0 gap-1 overflow-x-auto">
           {blocks.map((b, i) => (
             <button
               key={b.label}
@@ -65,7 +67,7 @@ export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
                 setActiveTab(i);
                 setCopied(false);
               }}
-              className={`rounded-md px-2.5 py-1 font-mono text-xs transition-colors ${
+              className={`shrink-0 whitespace-nowrap rounded-md px-2.5 py-1 font-mono text-xs transition-colors ${
                 i === activeTab
                   ? "bg-slate-700 text-slate-200"
                   : "text-slate-500 hover:text-slate-300"
@@ -79,7 +81,7 @@ export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
         {/* copy */}
         <button
           onClick={handleCopy}
-          className="ml-auto rounded p-1 text-slate-500 transition-colors hover:text-slate-300"
+          className="ml-auto shrink-0 rounded p-1 text-slate-500 transition-colors hover:text-slate-300"
           aria-label="코드 복사"
         >
           {copied ? (

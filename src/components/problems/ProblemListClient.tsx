@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import ProblemCard from "@/components/home/ProblemCard";
 import { CATEGORY_META, type Category, type ProblemMeta } from "@/types/problem";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +11,9 @@ type SortDir = "asc" | "desc";
 
 const ALL = "all" as const;
 type FilterCategory = Category | typeof ALL;
+
+const VALID_CATEGORIES = new Set<string>(["all", "linux", "kubernetes", "network", "cicd", "monitoring"]);
+const VALID_SORT_KEYS = new Set<string>(["id", "difficulty"]);
 
 const CATEGORIES: { value: FilterCategory; label: string }[] = [
   { value: ALL, label: "전체" },
@@ -34,16 +38,43 @@ function SortIcon({ dir }: { dir: SortDir }) {
 
 export default function ProblemListClient({ problems }: { problems: ProblemMeta[] }) {
   const { solvedIds } = useAuth();
-  const [category, setCategory] = useState<FilterCategory>(ALL);
-  const [sortKey, setSortKey] = useState<SortKey>("id");
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const rawCat = searchParams.get("category") ?? "all";
+  const rawSort = searchParams.get("sort") ?? "id";
+  const rawDir = searchParams.get("dir") ?? "asc";
+
+  const category: FilterCategory = VALID_CATEGORIES.has(rawCat) ? (rawCat as FilterCategory) : ALL;
+  const sortKey: SortKey = VALID_SORT_KEYS.has(rawSort) ? (rawSort as SortKey) : "id";
+  const sortDir: SortDir = rawDir === "desc" ? "desc" : "asc";
+
+  const updateParams = useCallback(
+    (updates: Record<string, string>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      for (const [k, v] of Object.entries(updates)) {
+        if ((k === "category" && v === "all") || (k === "sort" && v === "id") || (k === "dir" && v === "asc")) {
+          params.delete(k);
+        } else {
+          params.set(k, v);
+        }
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [searchParams, router, pathname],
+  );
+
+  function setCategory(value: FilterCategory) {
+    updateParams({ category: value });
+  }
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      updateParams({ dir: sortDir === "asc" ? "desc" : "asc" });
     } else {
-      setSortKey(key);
-      setSortDir("asc");
+      updateParams({ sort: key, dir: "asc" });
     }
   }
 
