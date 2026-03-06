@@ -3,6 +3,18 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.4.0] — 2026-03-06
+
+### ✨ 새 기능
+- Add keyword search ([`fa6264a`](https://github.com/kiku99/Infratice/commit/fa6264aa870b1788f4a67eb9fe988cefc9f26dae))
+- Add pagination in problem list ([`811d9ae`](https://github.com/kiku99/Infratice/commit/811d9ae7a65df578b9d5ceb7e7f6c46bc20fc627))
+- Add problem list search, pagination, and detail tag display ([`591870c`](https://github.com/kiku99/Infratice/commit/591870ceac60ca14903592ecdb16754570f96fb0))
+
+
+### 🐛 버그 수정
+- Improve problem list search visibility and pagination ([`02cb504`](https://github.com/kiku99/Infratice/commit/02cb5046b26860632a784aa386accfeb7f922e23))
+
+
 ## [1.3.0] — 2026-03-04
 
 ### ✨ 새 기능
