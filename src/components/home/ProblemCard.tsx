@@ -41,9 +41,11 @@ function DifficultyStars({ level }: { level: number }) {
 export default function ProblemCard({
   problem,
   solved = false,
+  highlightQuery = "",
 }: {
   problem: ProblemMeta;
   solved?: boolean;
+  highlightQuery?: string;
 }) {
   const meta = CATEGORY_META[problem.category];
   const number = problem.slug.split("-")[0];
@@ -82,14 +84,21 @@ export default function ProblemCard({
       <div className="flex items-center justify-between">
         <DifficultyStars level={problem.difficulty} />
         <div className="flex flex-wrap gap-1">
-          {problem.tags.slice(0, 2).map((tag) => (
-            <span
-              key={tag}
-              className="rounded bg-slate-100 px-1.5 py-0.5 text-[0.65rem] text-slate-500 dark:bg-slate-800 dark:text-slate-500"
-            >
-              {tag}
-            </span>
-          ))}
+          {problem.tags.slice(0, 3).map((tag) => {
+            const isMatch = highlightQuery && tag.toLowerCase().includes(highlightQuery.toLowerCase());
+            return (
+              <span
+                key={tag}
+                className={`rounded px-1.5 py-0.5 text-[0.65rem] ${
+                  isMatch
+                    ? "bg-emerald-100 font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                    : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-500"
+                }`}
+              >
+                {tag}
+              </span>
+            );
+          })}
         </div>
       </div>
     </Link>

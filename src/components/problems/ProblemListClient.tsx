@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import ProblemCard from "@/components/home/ProblemCard";
 import { CATEGORY_META, type Category, type ProblemMeta } from "@/types/problem";
@@ -14,6 +14,14 @@ type FilterCategory = Category | typeof ALL;
 
 const VALID_CATEGORIES = new Set<string>(["all", "linux", "kubernetes", "network", "cicd", "monitoring"]);
 const VALID_SORT_KEYS = new Set<string>(["id", "difficulty"]);
+
+const SEARCH_DEBOUNCE_MS = 250;
+
+function matchesQuery(problem: ProblemMeta, query: string): boolean {
+  const q = query.toLowerCase();
+  if (problem.title.toLowerCase().includes(q)) return true;
+  return problem.tags.some((tag) => tag.toLowerCase().includes(q));
+}
 
 const CATEGORIES: { value: FilterCategory; label: string }[] = [
   { value: ALL, label: "전체" },
@@ -45,16 +53,25 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
   const rawCat = searchParams.get("category") ?? "all";
   const rawSort = searchParams.get("sort") ?? "id";
   const rawDir = searchParams.get("dir") ?? "asc";
+  const rawQuery = searchParams.get("q") ?? "";
 
   const category: FilterCategory = VALID_CATEGORIES.has(rawCat) ? (rawCat as FilterCategory) : ALL;
   const sortKey: SortKey = VALID_SORT_KEYS.has(rawSort) ? (rawSort as SortKey) : "id";
   const sortDir: SortDir = rawDir === "desc" ? "desc" : "asc";
 
+  const [searchInput, setSearchInput] = useState(rawQuery);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
   const updateParams = useCallback(
     (updates: Record<string, string>) => {
       const params = new URLSearchParams(searchParams.toString());
       for (const [k, v] of Object.entries(updates)) {
-        if ((k === "category" && v === "all") || (k === "sort" && v === "id") || (k === "dir" && v === "asc")) {
+        if (
+          (k === "category" && v === "all") ||
+          (k === "sort" && v === "id") ||
+          (k === "dir" && v === "asc") ||
+          (k === "q" && v === "")
+        ) {
           params.delete(k);
         } else {
           params.set(k, v);
@@ -65,6 +82,24 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
     },
     [searchParams, router, pathname],
   );
+
+  useEffect(() => {
+    setSearchInput(rawQuery);
+  }, [rawQuery]);
+
+  function handleSearchChange(value: string) {
+    setSearchInput(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      updateParams({ q: value.trim() });
+    }, SEARCH_DEBOUNCE_MS);
+  }
+
+  function clearSearch() {
+    setSearchInput("");
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    updateParams({ q: "" });
+  }
 
   function setCategory(value: FilterCategory) {
     updateParams({ category: value });
@@ -79,7 +114,11 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
   }
 
   const filtered = useMemo(() => {
-    const base = category === ALL ? problems : problems.filter((p) => p.category === category);
+    let base = category === ALL ? problems : problems.filter((p) => p.category === category);
+
+    if (rawQuery) {
+      base = base.filter((p) => matchesQuery(p, rawQuery));
+    }
 
     return [...base].sort((a, b) => {
       let diff = 0;
@@ -90,21 +129,55 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
       }
       return sortDir === "asc" ? diff : -diff;
     });
-  }, [problems, category, sortKey, sortDir]);
+  }, [problems, category, sortKey, sortDir, rawQuery]);
 
-  // count per category (excluding 'all')
-  const countOf = (cat: FilterCategory) =>
-    cat === ALL ? problems.length : problems.filter((p) => p.category === cat).length;
+  const countOf = (cat: FilterCategory) => {
+    const catProblems = cat === ALL ? problems : problems.filter((p) => p.category === cat);
+    return rawQuery ? catProblems.filter((p) => matchesQuery(p, rawQuery)).length : catProblems.length;
+  };
 
   return (
     <div>
+      {/* ── search ──────────────────────────────────────────────── */}
+      <div className="relative mb-5">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
+        >
+          <path
+            fillRule="evenodd"
+            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <input
+          type="text"
+          value={searchInput}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          placeholder="제목 또는 태그로 검색 (예: disk, kubectl, DNS)"
+          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-9 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:placeholder:text-slate-600 dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+        />
+        {searchInput && (
+          <button
+            onClick={clearSearch}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4">
+              <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+            </svg>
+          </button>
+        )}
+      </div>
+
       {/* ── toolbar ─────────────────────────────────────────────── */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* category tabs */}
         <div className="flex flex-wrap gap-1.5">
           {CATEGORIES.map(({ value, label }) => {
             const count = countOf(value);
-            if (count === 0 && value !== ALL) return null;
+            if (count === 0 && value !== ALL && !rawQuery) return null;
             const active = category === value;
             const color = value !== ALL ? CATEGORY_META[value as Category].color : "";
             return (
@@ -162,19 +235,42 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
 
       {/* ── result info ─────────────────────────────────────────── */}
       <p className="mb-4 text-xs text-slate-500 dark:text-slate-600">
-        {filtered.length}개 문제
+        {rawQuery ? (
+          <>
+            <span className="font-medium text-slate-700 dark:text-slate-300">&ldquo;{rawQuery}&rdquo;</span>
+            {" "}검색 결과 {filtered.length}개
+          </>
+        ) : (
+          <>{filtered.length}개 문제</>
+        )}
       </p>
 
       {/* ── grid ────────────────────────────────────────────────── */}
       {filtered.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
-            <ProblemCard key={p.id} problem={p} solved={solvedIds.has(p.id)} />
+            <ProblemCard key={p.id} problem={p} solved={solvedIds.has(p.id)} highlightQuery={rawQuery} />
           ))}
         </div>
       ) : (
-        <div className="py-20 text-center text-slate-500 dark:text-slate-600">
-          해당 카테고리에 등록된 문제가 없습니다.
+        <div className="py-20 text-center">
+          {rawQuery ? (
+            <>
+              <p className="text-slate-500 dark:text-slate-500">
+                &ldquo;{rawQuery}&rdquo;에 대한 검색 결과가 없습니다.
+              </p>
+              <button
+                onClick={clearSearch}
+                className="mt-3 text-sm font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300"
+              >
+                검색 초기화
+              </button>
+            </>
+          ) : (
+            <p className="text-slate-500 dark:text-slate-600">
+              해당 카테고리에 등록된 문제가 없습니다.
+            </p>
+          )}
         </div>
       )}
     </div>
