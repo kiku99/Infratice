@@ -16,6 +16,18 @@ const VALID_CATEGORIES = new Set<string>(["all", "linux", "kubernetes", "network
 const VALID_SORT_KEYS = new Set<string>(["id", "difficulty"]);
 
 const SEARCH_DEBOUNCE_MS = 250;
+const PAGE_SIZE = 18;
+
+function parsePage(value: string | null): number {
+  const page = Number.parseInt(value ?? "", 10);
+  return Number.isNaN(page) || page < 1 ? 1 : page;
+}
+
+function getVisiblePages(currentPage: number, totalPages: number): number[] {
+  const start = Math.max(1, currentPage - 2);
+  const end = Math.min(totalPages, currentPage + 2);
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
 
 function matchesQuery(problem: ProblemMeta, query: string): boolean {
   const q = query.toLowerCase();
@@ -54,10 +66,12 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
   const rawSort = searchParams.get("sort") ?? "id";
   const rawDir = searchParams.get("dir") ?? "asc";
   const rawQuery = searchParams.get("q") ?? "";
+  const rawPage = searchParams.get("page");
 
   const category: FilterCategory = VALID_CATEGORIES.has(rawCat) ? (rawCat as FilterCategory) : ALL;
   const sortKey: SortKey = VALID_SORT_KEYS.has(rawSort) ? (rawSort as SortKey) : "id";
   const sortDir: SortDir = rawDir === "desc" ? "desc" : "asc";
+  const requestedPage = parsePage(rawPage);
 
   const [searchInput, setSearchInput] = useState(rawQuery);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
@@ -70,7 +84,8 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
           (k === "category" && v === "all") ||
           (k === "sort" && v === "id") ||
           (k === "dir" && v === "asc") ||
-          (k === "q" && v === "")
+          (k === "q" && v === "") ||
+          (k === "page" && v === "1")
         ) {
           params.delete(k);
         } else {
@@ -87,30 +102,42 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
     setSearchInput(rawQuery);
   }, [rawQuery]);
 
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
+
   function handleSearchChange(value: string) {
     setSearchInput(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      updateParams({ q: value.trim() });
+      updateParams({ q: value.trim(), page: "1" });
     }, SEARCH_DEBOUNCE_MS);
   }
 
   function clearSearch() {
     setSearchInput("");
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    updateParams({ q: "" });
+    updateParams({ q: "", page: "1" });
   }
 
   function setCategory(value: FilterCategory) {
-    updateParams({ category: value });
+    updateParams({ category: value, page: "1" });
   }
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
-      updateParams({ dir: sortDir === "asc" ? "desc" : "asc" });
+      updateParams({ dir: sortDir === "asc" ? "desc" : "asc", page: "1" });
     } else {
-      updateParams({ sort: key, dir: "asc" });
+      updateParams({ sort: key, dir: "asc", page: "1" });
     }
+  }
+
+  function setPage(page: number) {
+    updateParams({ page: String(page) });
   }
 
   const filtered = useMemo(() => {
@@ -135,6 +162,20 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
     const catProblems = cat === ALL ? problems : problems.filter((p) => p.category === cat);
     return rawQuery ? catProblems.filter((p) => matchesQuery(p, rawQuery)).length : catProblems.length;
   };
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(requestedPage, totalPages);
+  const pageStartIndex = (currentPage - 1) * PAGE_SIZE;
+  const paginatedProblems = filtered.slice(pageStartIndex, pageStartIndex + PAGE_SIZE);
+  const pageStart = filtered.length === 0 ? 0 : pageStartIndex + 1;
+  const pageEnd = Math.min(filtered.length, pageStartIndex + PAGE_SIZE);
+  const visiblePages = getVisiblePages(currentPage, totalPages);
+
+  useEffect(() => {
+    if (rawPage && String(currentPage) !== rawPage) {
+      updateParams({ page: String(currentPage) });
+    }
+  }, [rawPage, currentPage, updateParams]);
 
   return (
     <div>
@@ -243,15 +284,97 @@ export default function ProblemListClient({ problems }: { problems: ProblemMeta[
         ) : (
           <>{filtered.length}개 문제</>
         )}
+        {filtered.length > 0 && (
+          <>
+            {" · "}현재 {pageStart}-{pageEnd}
+          </>
+        )}
       </p>
 
       {/* ── grid ────────────────────────────────────────────────── */}
       {filtered.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => (
-            <ProblemCard key={p.id} problem={p} solved={solvedIds.has(p.id)} highlightQuery={rawQuery} />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {paginatedProblems.map((p) => (
+              <ProblemCard key={p.id} problem={p} solved={solvedIds.has(p.id)} highlightQuery={rawQuery} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <nav
+              aria-label="문제 목록 페이지네이션"
+              className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-between"
+            >
+              <p className="text-xs text-slate-500 dark:text-slate-600">
+                {currentPage} / {totalPages} 페이지
+              </p>
+
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                >
+                  이전
+                </button>
+
+                {visiblePages[0] > 1 && (
+                  <>
+                    <button
+                      onClick={() => setPage(1)}
+                      className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                    >
+                      1
+                    </button>
+                    {visiblePages[0] > 2 && (
+                      <span className="px-1 text-sm text-slate-400 dark:text-slate-600">...</span>
+                    )}
+                  </>
+                )}
+
+                {visiblePages.map((page) => {
+                  const active = page === currentPage;
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setPage(page)}
+                      aria-current={active ? "page" : undefined}
+                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                        active
+                          ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                          : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                {visiblePages[visiblePages.length - 1] < totalPages && (
+                  <>
+                    {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
+                      <span className="px-1 text-sm text-slate-400 dark:text-slate-600">...</span>
+                    )}
+                    <button
+                      onClick={() => setPage(totalPages)}
+                      className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+
+                <button
+                  onClick={() => setPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                >
+                  다음
+                </button>
+              </div>
+            </nav>
+          )}
+        </>
       ) : (
         <div className="py-20 text-center">
           {rawQuery ? (
