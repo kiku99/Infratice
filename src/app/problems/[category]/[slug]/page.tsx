@@ -35,8 +35,8 @@ export default async function ProblemPage({ params }: PageProps) {
 
   return (
     <SplitView
-      left={<ScenarioPanel problem={problem} />}
-      right={<SolutionPanel problem={problem} />}
+      left={<ScenarioPanel key={`scenario-${problem.id}`} problem={problem} />}
+      right={<SolutionPanel key={`solution-${problem.id}`} problem={problem} />}
     />
   );
 }

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { CATEGORY_META, type Problem } from "@/types/problem";
 import TerminalBlock from "./TerminalBlock";
 import HintAccordion from "./HintAccordion";
@@ -5,9 +8,15 @@ import HintAccordion from "./HintAccordion";
 export default function ScenarioPanel({ problem }: { problem: Problem }) {
   const meta = CATEGORY_META[problem.category];
   const number = problem.slug.split("-")[0];
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [problem.id]);
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-5 sm:p-6">
+    <div ref={containerRef} className="flex h-full flex-col overflow-y-auto p-5 sm:p-6">
       {/* header */}
       <div className="mb-5">
         <div className="mb-2 flex items-center gap-2">
@@ -21,6 +30,18 @@ export default function ScenarioPanel({ problem }: { problem: Problem }) {
         <h1 className="text-lg font-bold text-slate-900 dark:text-white">
           {problem.title}
         </h1>
+        {problem.tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {problem.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md bg-slate-100 px-2 py-1 text-[0.7rem] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* scenario */}
