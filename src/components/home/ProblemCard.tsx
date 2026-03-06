@@ -49,6 +49,14 @@ export default function ProblemCard({
 }) {
   const meta = CATEGORY_META[problem.category];
   const number = problem.slug.split("-")[0];
+  const normalizedQuery = highlightQuery.trim().toLowerCase();
+  const matchedTags = normalizedQuery
+    ? problem.tags.filter((tag) => tag.toLowerCase().includes(normalizedQuery))
+    : [];
+  const unmatchedTags = normalizedQuery
+    ? problem.tags.filter((tag) => !tag.toLowerCase().includes(normalizedQuery))
+    : problem.tags;
+  const visibleTags = [...matchedTags, ...unmatchedTags].slice(0, 3);
 
   return (
     <Link
@@ -84,8 +92,8 @@ export default function ProblemCard({
       <div className="flex items-center justify-between">
         <DifficultyStars level={problem.difficulty} />
         <div className="flex flex-wrap gap-1">
-          {problem.tags.slice(0, 3).map((tag) => {
-            const isMatch = highlightQuery && tag.toLowerCase().includes(highlightQuery.toLowerCase());
+          {visibleTags.map((tag) => {
+            const isMatch = normalizedQuery && tag.toLowerCase().includes(normalizedQuery);
             return (
               <span
                 key={tag}
