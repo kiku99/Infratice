@@ -4,6 +4,10 @@
 
 **[infratice.co.kr](https://infratice.co.kr)**
 
+<div align="center">
+  <img src="public/image.png" alt="Infratice 메인 화면" width="800" />
+</div>
+
 ---
 
 ## 이런 분을 위한 서비스입니다
