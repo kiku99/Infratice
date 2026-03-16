@@ -3,6 +3,12 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.4.1] — 2026-03-16
+
+### 🐛 버그 수정
+- Remove smooth scroll page transition ([`6f70d2b`](https://github.com/kiku99/Infratice/commit/6f70d2b0b9585067aeae366af970d89a7589b907))
+
+
 ## [1.4.0] — 2026-03-06
 
 ### ✨ 새 기능
