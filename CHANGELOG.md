@@ -3,6 +3,12 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.5.0] — 2026-03-17
+
+### 📦 기타
+- Improve network-004 with evidence-based tcpdump analysis ([`9828810`](https://github.com/kiku99/Infratice/commit/98288105b7b400255cc7e7c15af2446b484c17e4))
+
+
 ## [1.4.1] — 2026-03-16
 
 ### 🐛 버그 수정
