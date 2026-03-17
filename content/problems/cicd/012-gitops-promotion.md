@@ -1,6 +1,6 @@
 ---
 id: "cicd-012"
-title: "GitOps 파이프라인에서 인프라 레포 이미지 태그 미갱신"
+title: "이미지 빌드 후 GitOps 배포 반영이 멈추는 원인 분석"
 category: "cicd"
 difficulty: 3
 tags: ["github-actions", "gitops", "cross-repo", "image-tag", "argocd"]
@@ -82,13 +82,9 @@ Build and Promote #34
 
 ### 원인 분석
 
-세 가지 문제가 있습니다:
+현재 실행 로그에서 직접 확인되는 실패 지점은 `Checkout infra repo` 단계입니다. `fatal: could not read Username for 'https://github.com'` 에러는 `infra-repo`를 체크아웃할 때 필요한 인증 정보가 전달되지 않았음을 의미합니다.
 
-1. **Short SHA 미처리**: `GITHUB_SHA`의 전체 40자를 그대로 사용하고 있습니다. `${GITHUB_SHA::7}`로 앞 7자만 추출해야 합니다.
-
-2. **Cross-repo 인증 누락**: 다른 리포지토리(`infra-repo`)를 체크아웃하려면 `token` 파라미터에 해당 리포지토리 접근 권한이 있는 PAT(Personal Access Token)를 전달해야 합니다. 기본 `GITHUB_TOKEN`은 현재 리포지토리에 대한 권한만 가집니다.
-
-3. **sed 변수 치환 오류**: `sed` 명령어 내에서 `$SHORT_SHA`가 셸 변수가 아닌 리터럴 문자열로 처리됩니다. 작은따옴표(`'`) 안에서는 변수 확장이 되지 않으므로 큰따옴표(`"`)를 사용하거나 `${{ env.SHORT_SHA }}`를 사용해야 합니다.
+즉 이번 실행에서 이미지 태그 갱신이 이루어지지 않은 직접 원인은 **cross-repo checkout 인증 누락**입니다. `SHORT_SHA` 처리 방식이나 `sed` 치환 방식에도 개선 여지는 있지만, 제공된 로그만 기준으로 하면 이번 런은 그 단계까지 도달하지 못했으므로 장애 원인으로 단정할 수는 없습니다.
 
 ### 해결 방법
 
@@ -105,11 +101,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Calculate short SHA
-        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Calculate image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
 
       - name: Build Docker image
-        run: docker build -t app:${{ env.SHORT_SHA }} .
+        run: docker build -t app:${{ env.IMAGE_TAG }} .
 
       - name: Checkout infra repo
         uses: actions/checkout@v4
@@ -121,20 +117,20 @@ jobs:
       - name: Update image tag
         working-directory: infra
         run: |
-          sed -i "s/tag: \".*\"/tag: \"${{ env.SHORT_SHA }}\"/" values.yaml
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          sed -i "s/tag: \".*\"/tag: \"${{ env.IMAGE_TAG }}\"/" values.yaml
           git add values.yaml
-          git commit -m "Update tag to ${{ env.SHORT_SHA }}"
+          git commit -m "Update tag to ${{ env.IMAGE_TAG }}"
           git push
 ```
 
 ```bash
-# 주요 수정 사항:
-# 1. ${GITHUB_SHA::7} → 7자 short SHA 추출
-# 2. token: ${{ secrets.INFRA_REPO_PAT }} → cross-repo 접근 권한
-# 3. sed 명령어에서 큰따옴표 사용 + ${{ env.SHORT_SHA }} 참조
-# 4. git config 추가 → 커밋 author 설정
+# 이번 장애 기준 핵심 수정 사항:
+# 1. token: ${{ secrets.INFRA_REPO_PAT }} → infra-repo checkout 인증 추가
+# 2. checkout 성공 후 values.yaml 갱신과 push 진행
+#
+# 추가 개선:
+# - IMAGE_TAG 형식(short SHA 등) 표준화
+# - sed 대신 yq 사용으로 YAML 안전 수정
 ```
 
 ### 실무 팁

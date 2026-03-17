@@ -98,7 +98,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
@@ -106,7 +105,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
@@ -114,8 +113,8 @@ jobs:
 ```
 
 ```bash
-# 실행 순서: lint → test → build
-# lint 실패 시 test와 build는 자동으로 skipped 처리됨
+# 권장 실행 구조: lint와 test는 병렬, build는 둘 다 성공해야 시작
+# lint 또는 test 실패 시 build는 자동으로 skipped 처리됨
 ```
 
 ### 실무 팁

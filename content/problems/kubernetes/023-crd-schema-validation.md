@@ -1,18 +1,18 @@
 ---
 id: "kubernetes-023"
-title: "CRD 스키마 검증 없이 잘못된 Custom Resource가 생성되는 문제"
+title: "잘못된 Custom Resource 생성으로 컨트롤러가 종료되는 원인 분석"
 category: "kubernetes"
 difficulty: 3
 tags: ["crd", "schema-validation", "openapiv3schema", "custom-resource"]
 hints:
-  - "현재 CRD에 스키마 검증(OpenAPI v3 Schema)이 어떻게 설정되어 있는지 확인하세요."
-  - "`spec.size` 필드에 대한 타입 제약이나 필수 여부가 정의되어 있는지 살펴보세요."
-  - "OpenAPI v3 Schema에서 `required`, `type`, `minimum` 키워드를 활용하면 필드 검증을 강제할 수 있습니다."
+  - "현재 CRD 정의가 `spec` 필드 값을 어디까지 검증하는지 확인하세요."
+  - "`spec.size`에 대해 필수 여부와 값 범위가 정의되어 있는지 살펴보세요."
+  - "API 서버 단계에서 잘못된 리소스를 막으려면 어떤 제약이 필요한지 생각해 보세요."
 ---
 
 ## 상황
 
-`Widget` CRD를 운영 중인데, 개발자들이 잘못된 값을 가진 Custom Resource를 생성하여 컨트롤러가 크래시됩니다. `spec.size` 필드가 없거나 음수인 Widget이 생성되고 있습니다. CRD에 스키마 검증을 추가하여 잘못된 리소스 생성을 API 수준에서 차단해야 합니다.
+`Widget` CRD를 운영 중인데, 일부 Custom Resource 생성 이후 컨트롤러가 반복적으로 에러를 내며 종료됩니다. 제공된 리소스 예시와 CRD 정의를 분석하여 왜 이런 리소스가 생성될 수 있었는지 파악하고, 동일한 문제가 다시 발생하지 않도록 예방 방법을 제안하세요.
 
 ## 데이터
 

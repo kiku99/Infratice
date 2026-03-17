@@ -1,6 +1,6 @@
 ---
 id: "cicd-003"
-title: "Docker 이미지 latest 태그로 인한 롤백 불가"
+title: "이전 배포 이미지를 식별할 수 없는 원인 분석"
 category: "cicd"
 difficulty: 1
 tags: ["docker", "image-tag", "commit-sha", "rollback"]

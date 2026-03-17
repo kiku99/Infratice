@@ -12,7 +12,7 @@ hints:
 
 ## 상황
 
-`ops` Namespace의 `cleanup` CronJob이 매분 실행되어 임시 파일을 정리해야 하지만, 배포 후 5분이 지나도 한 번도 실행되지 않았습니다. 또한 완료된 Job 이력이 너무 많이 남는 문제도 보고되었습니다. 제공된 정보를 분석하여 원인을 찾으세요.
+`ops` Namespace의 `cleanup` CronJob이 매분 실행되어 임시 파일을 정리해야 하지만, 배포 후 5분이 지나도 한 번도 실행되지 않았습니다. 제공된 정보를 분석하여 원인을 찾으세요.
 
 ## 데이터
 
@@ -56,15 +56,13 @@ spec:
 
 `LAST SCHEDULE`이 `<none>`으로 표시되어 CronJob이 한 번도 실행되지 않았음을 알 수 있습니다. 핵심 원인은 `schedule: "0 0 1 1 *"`에 있습니다. 이 cron 표현식은 "매년 1월 1일 0시 0분"을 의미하며, 매분 실행이 아닙니다. 매분 실행하려면 `"* * * * *"`로 설정해야 합니다.
 
-또한 `timeZone` 필드가 명시되지 않아 kube-controller-manager의 시간대에 의존하게 되며, `successfulJobsHistoryLimit`이 기본값(3)으로 설정되어 Job 이력이 쌓일 수 있습니다.
+현재 제공 데이터만으로 확실히 말할 수 있는 문제는 잘못된 cron 식이며, 이 때문에 Job이 한 번도 생성되지 않았습니다. `timeZone` 명시는 운영 안정성 측면에서 도움이 되지만, 이번 장애의 직접 원인으로 볼 수는 없습니다.
 
 ### 해결 방법
 
 ```bash
 # 1. CronJob 매니페스트 수정
 # schedule: "0 0 1 1 *" → "* * * * *"
-# spec.timeZone: "Etc/UTC" 추가
-# spec.successfulJobsHistoryLimit: 1 추가
 
 # 2. 수정된 매니페스트 적용
 kubectl apply -f cleanup-cronjob.yaml
@@ -78,4 +76,4 @@ kubectl get jobs -n ops
 
 ### 실무 팁
 
-Cron 표현식은 실수하기 쉬우므로 [crontab.guru](https://crontab.guru) 같은 도구로 미리 검증하세요. `timeZone` 필드를 명시적으로 설정하면 클러스터 시간대에 의존하지 않아 예측 가능한 스케줄링이 가능합니다. `successfulJobsHistoryLimit`과 `failedJobsHistoryLimit`을 적절히 설정하여 완료된 Job이 지나치게 쌓이지 않도록 관리하세요.
+Cron 표현식은 실수하기 쉬우므로 [crontab.guru](https://crontab.guru) 같은 도구로 미리 검증하세요. `timeZone` 필드를 명시적으로 설정하면 클러스터 시간대에 의존하지 않아 예측 가능한 스케줄링이 가능합니다. 운영 환경에서는 `successfulJobsHistoryLimit`과 `failedJobsHistoryLimit`도 함께 조정해 Job 이력이 과도하게 쌓이지 않도록 관리하는 것이 좋습니다.

@@ -1,6 +1,6 @@
 ---
 id: "linux-007"
-title: "포트 충돌로 인한 애플리케이션 시작 실패"
+title: "애플리케이션이 시작 직후 종료되는 원인 분석"
 category: "linux"
 difficulty: 1
 tags: ["port", "ss", "lsof", "bind", "conflict"]

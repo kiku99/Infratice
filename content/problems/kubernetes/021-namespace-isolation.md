@@ -1,13 +1,13 @@
 ---
 id: "kubernetes-021"
-title: "NetworkPolicy로 Namespace 간 트래픽 격리 구성하기"
+title: "Namespace 간 허용된 통신만 남기도록 접근 제어 구성하기"
 category: "kubernetes"
 difficulty: 2
 tags: ["networkpolicy", "namespace-isolation", "multi-tenant", "limitrange"]
 hints:
-  - "현재 team-a에서 team-b의 모든 Pod에 접근 가능한 상태입니다. 기본 차단(deny-all) 정책부터 적용하세요."
-  - "특정 Namespace의 특정 label을 가진 Pod에만 접근을 허용하려면 NetworkPolicy의 `namespaceSelector`와 `podSelector`를 조합하세요."
-  - "LimitRange를 사용하면 Namespace 내 컨테이너의 기본 리소스 제한을 강제할 수 있습니다."
+  - "현재 어떤 방향의 트래픽이 허용되고 있는지 먼저 정리해 보세요."
+  - "Namespace 단위 조건과 Pod 라벨 조건을 함께 사용하면 허용 범위를 세밀하게 좁힐 수 있습니다."
+  - "기본 허용 상태를 유지할지, 기본 차단 후 예외만 열지 생각해 보세요."
 ---
 
 ## 상황

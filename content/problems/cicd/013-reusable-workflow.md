@@ -1,6 +1,6 @@
 ---
 id: "cicd-013"
-title: "재사용 워크플로우 호출 시 입력 파라미터 전달 오류"
+title: "공통 워크플로우 분리 후 호출이 실패하는 원인 분석"
 category: "cicd"
 difficulty: 3
 tags: ["github-actions", "reusable-workflow", "workflow-call", "dry"]

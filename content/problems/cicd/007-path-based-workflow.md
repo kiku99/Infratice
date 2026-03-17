@@ -1,6 +1,6 @@
 ---
 id: "cicd-007"
-title: "불필요한 워크플로우 실행으로 인한 CI 비용 낭비"
+title: "변경 범위와 무관하게 CI가 반복 실행되는 원인 분석"
 category: "cicd"
 difficulty: 2
 tags: ["github-actions", "path-filter", "workflow-trigger", "cost-optimization"]
@@ -12,7 +12,7 @@ hints:
 
 ## 상황
 
-인프라 코드(`/infra`)와 문서(`/docs`)가 한 리포지토리에 공존하는 모노레포를 운영 중입니다. 문서만 수정해도 인프라 유효성 검증 워크플로우가 매번 실행되어 월간 GitHub Actions 사용량이 예상의 3배를 초과하고 있습니다. 워크플로우를 분석하여 원인을 파악하세요.
+인프라 코드(`/infra`)와 문서(`/docs`)가 한 리포지토리에 공존하는 모노레포를 운영 중입니다. 실제 변경 범위와 무관하게 인프라 유효성 검증 워크플로우가 자주 실행되어 월간 GitHub Actions 사용량이 예상의 3배를 초과하고 있습니다. 워크플로우를 분석하여 원인을 파악하세요.
 
 ## 데이터
 

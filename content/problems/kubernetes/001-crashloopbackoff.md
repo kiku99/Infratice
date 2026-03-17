@@ -75,18 +75,21 @@ Pod 로그의 마지막 부분에서 핵심 원인을 확인할 수 있습니다
 
 > `Failed to load configuration: required environment variable "CACHE_TTL" is not set`
 
-v2.1.0에서 새로 추가된 기능이 `CACHE_TTL` 환경 변수를 필수로 요구하지만, ConfigMap(`api-config`)에 해당 키가 추가되지 않았습니다. 애플리케이션은 시작 시 필수 환경 변수 검증에 실패하여 Exit Code 1로 종료되고, Kubernetes가 반복 재시작을 시도하며 `CrashLoopBackOff`에 빠진 것입니다.
+제공된 `kubectl describe pod` 출력의 환경 변수 목록에는 `DB_HOST`, `DB_PORT`, `DB_NAME`, `REDIS_URL`, `NEW_FEATURE`만 있고, `CACHE_TTL`은 보이지 않습니다. 즉 현재 데이터로 직접 확인할 수 있는 문제는 **Deployment가 `CACHE_TTL` 환경 변수를 컨테이너에 주입하지 않고 있다**는 점입니다.
+
+v2.1.0에서 `CACHE_TTL`이 필수값이 되었는데 Pod 스펙에 해당 매핑이 없어, 애플리케이션이 시작 시 환경 변수 검증에 실패하고 Exit Code 1로 종료한 뒤 `CrashLoopBackOff`에 빠진 것입니다. ConfigMap에 `cache_ttl` 키가 실제로 존재하는지는 제공 데이터만으로 확정할 수 없으므로, 그 부분은 추가 확인이 필요합니다.
 
 ### 해결 방법
 
 ```bash
-# 1. ConfigMap에 누락된 환경 변수 추가
-kubectl edit configmap api-config
-# 또는 패치 명령:
+# 1. 먼저 ConfigMap에 cache_ttl 키가 있는지 확인
+kubectl get configmap api-config -o yaml
+
+# 2. 키가 없다면 ConfigMap에 추가
 kubectl patch configmap api-config --type merge \
   -p '{"data":{"cache_ttl":"300"}}'
 
-# 2. Deployment에 환경 변수 매핑 추가
+# 3. Deployment에 환경 변수 매핑 추가
 kubectl edit deployment api-server
 # env 섹션에 추가:
 #   - name: CACHE_TTL
@@ -95,10 +98,10 @@ kubectl edit deployment api-server
 #         name: api-config
 #         key: cache_ttl
 
-# 3. 롤아웃 재시작
+# 4. 롤아웃 재시작
 kubectl rollout restart deployment api-server
 
-# 4. 정상 동작 확인
+# 5. 정상 동작 확인
 kubectl rollout status deployment api-server
 kubectl get pods -l app=api-server
 ```

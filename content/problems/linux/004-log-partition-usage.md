@@ -1,6 +1,6 @@
 ---
 id: "linux-004"
-title: "별도 파티션에 마운트된 로그 디렉터리 용량 부족"
+title: "로그 파일이 더 이상 생성되지 않는 원인 분석"
 category: "linux"
 difficulty: 2
 tags: ["mount", "partition", "df", "log-rotation"]

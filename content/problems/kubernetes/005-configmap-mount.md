@@ -1,17 +1,17 @@
 ---
 id: "kubernetes-005"
-title: "ConfigMap 키가 파일로 마운트되지 않는 문제"
+title: "ConfigMap 설정을 Pod에 마운트하지 못하는 원인 분석"
 category: "kubernetes"
 difficulty: 1
 tags: ["configmap", "volume", "mount", "pod"]
 hints:
   - "Pod 매니페스트에서 volume과 volumeMount 설정이 서로 올바르게 연결되어 있는지 확인하세요."
-  - "ConfigMap의 키 이름과 마운트 경로가 일치하는지 살펴보세요."
+  - "`volumeMounts.name`과 `volumes.name`이 정확히 같은지 살펴보세요."
 ---
 
 ## 상황
 
-애플리케이션에 필요한 설정값을 ConfigMap으로 만들어 Pod에 파일로 마운트하려고 합니다. 그런데 Pod 내부에서 마운트 경로를 확인하면 파일이 비어 있거나 예상한 파일이 없습니다. 제공된 ConfigMap과 Pod 매니페스트를 분석하여 원인을 찾으세요.
+애플리케이션에 필요한 설정값을 ConfigMap으로 만들어 Pod에 파일로 마운트하려고 합니다. 그런데 Pod 생성 단계에서 설정 마운트가 제대로 연결되지 않습니다. 제공된 ConfigMap과 Pod 매니페스트, 생성 오류를 분석하여 원인을 찾으세요.
 
 ## 데이터
 
@@ -49,21 +49,20 @@ spec:
       name: settings
 ```
 
-### kubectl describe pod config-pod (발췌)
+### kubectl apply -f config-pod.yaml
 
 ```bash
-Events:
-  Type     Reason       Age   From               Message
-  ----     ------       ----  ----               -------
-  Normal   Scheduled    10s   default-scheduler  Successfully assigned default/config-pod to node-01
-  Warning  FailedMount  5s    kubelet            MountVolume.SetUp failed for volume "config-volume": configMap "settings" not found
+Error from server (Invalid): error when creating "config-pod.yaml":
+Pod "config-pod" is invalid: spec.containers[0].volumeMounts[0].name: Not found: "config-volume"
 ```
 
 ## 해설
 
 ### 원인 분석
 
-`kubectl describe pod`의 Events에서 `MountVolume.SetUp failed for volume "config-volume"` 에러가 발생합니다. Pod 매니페스트를 자세히 보면, `volumeMounts`에서는 `name: config-volume`을 참조하고 있지만, `volumes` 섹션에서는 `name: config-vol`로 정의되어 있습니다. 이름이 불일치(`config-volume` vs `config-vol`)하여 Kubernetes가 볼륨을 찾지 못하는 것입니다.
+`kubectl apply` 오류에서 핵심은 `volumeMounts[0].name: Not found: "config-volume"`입니다. Pod 매니페스트를 보면 `volumeMounts`에서는 `name: config-volume`을 참조하지만, `volumes` 섹션에서는 `name: config-vol`로 정의되어 있습니다.
+
+즉 ConfigMap 자체가 없는 것이 아니라, `volumeMounts.name`과 `volumes.name`이 서로 달라 Pod가 참조할 볼륨을 찾지 못하는 것이 원인입니다. ConfigMap `settings`는 실제로 존재하므로, 현재 문제는 ConfigMap 내용이 아니라 Pod 매니페스트의 볼륨 이름 불일치입니다.
 
 ### 해결 방법
 
@@ -71,8 +70,7 @@ Events:
 # 1. Pod 매니페스트에서 volumes의 name을 volumeMounts와 일치시킴
 # volumes.name: config-vol → config-volume 으로 수정
 
-# 2. 기존 Pod 삭제 후 재생성
-kubectl delete pod config-pod
+# 2. 수정된 매니페스트 다시 적용
 kubectl apply -f config-pod.yaml
 
 # 3. Pod 내부에서 마운트된 파일 확인

@@ -1,6 +1,6 @@
 ---
 id: "kubernetes-014"
-title: "프라이빗 레지스트리 인증 실패로 인한 ImagePullBackOff"
+title: "이미지를 가져오지 못해 Pod가 시작되지 않는 원인 분석"
 category: "kubernetes"
 difficulty: 2
 tags: ["imagepullbackoff", "imagepullsecrets", "registry", "secret"]
@@ -12,7 +12,7 @@ hints:
 
 ## 상황
 
-`dev` Namespace에 배포한 `backend` Deployment의 Pod가 `ImagePullBackOff` 상태에 머물러 있습니다. 이미지는 프라이빗 컨테이너 레지스트리(ghcr.io)에 호스팅되어 있습니다. 제공된 정보를 분석하여 원인을 찾고 해결하세요.
+`dev` Namespace에 배포한 `backend` Deployment의 Pod가 `ImagePullBackOff` 상태에 머물러 있습니다. 제공된 정보를 분석하여 원인을 찾고 해결하세요.
 
 ## 데이터
 
