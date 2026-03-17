@@ -3,6 +3,12 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.6.0] — 2026-03-17
+
+### 📦 기타
+- Improve problem statements for evidence-based troubleshooting ([`d97dc21`](https://github.com/kiku99/Infratice/commit/d97dc21565bd27845fb6c968cfc8fb13b0e35a7a))
+
+
 ## [1.5.0] — 2026-03-17
 
 ### 📦 기타
