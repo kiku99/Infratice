@@ -74,28 +74,6 @@ pnpm dev
 
 ---
 
-## 디렉터리 구조
-
-```text
-Infratice/
-├── content/
-│   └── problems/           # 문제 콘텐츠
-│       ├── TEMPLATE.md     # 문제 작성 템플릿
-│       ├── linux/
-│       ├── kubernetes/
-│       ├── network/
-│       ├── cicd/
-│       └── monitoring/
-├── public/                 # 정적 파일
-└── src/
-    ├── app/                # Next.js App Router
-    ├── components/         # UI 컴포넌트
-    ├── lib/                # 콘텐츠 파싱, 유틸리티
-    └── types/              # 타입 정의
-```
-
----
-
 ## 기여하기
 
 새로운 장애 시나리오나 기존 문제의 개선 제안은 언제든지 환영합니다.
