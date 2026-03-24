@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HeroSection from "@/components/home/HeroSection";
+import LatestNoticeBanner from "@/components/home/LatestNoticeBanner";
 import ProblemCard from "@/components/home/ProblemCard";
 import { getAllProblems } from "@/lib/content";
 import { CATEGORY_META, type Category } from "@/types/problem";
@@ -13,6 +14,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6">
+      <LatestNoticeBanner />
       <HeroSection />
 
       <section id="problems" className="pb-20">

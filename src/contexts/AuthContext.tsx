@@ -13,6 +13,8 @@ import { supabase } from "@/lib/supabase";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  authReady: boolean;
+  isAdmin: boolean;
   solvedIds: Set<string>;
   markSolved: (problemId: string) => Promise<void>;
   unmarkSolved: (problemId: string) => Promise<void>;
@@ -35,26 +37,72 @@ async function fetchSolvedIds(userId: string): Promise<Set<string>> {
   }
 }
 
+async function fetchIsAdmin(userId: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) return false;
+    return Boolean(data);
+  } catch {
+    return false;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    let isMounted = true;
+
+    async function syncUserState(nextUser: User | null) {
+      if (!isMounted) return;
+
+      setUser(nextUser);
+
+      if (!nextUser) {
+        setSolvedIds(new Set());
+        setIsAdmin(false);
+        setLoading(false);
+        setAuthReady(true);
+        return;
+      }
+
+      setLoading(true);
+
+      const [nextSolvedIds, nextIsAdmin] = await Promise.all([
+        fetchSolvedIds(nextUser.id),
+        fetchIsAdmin(nextUser.id),
+      ]);
+
+      if (!isMounted) return;
+
+      setSolvedIds(nextSolvedIds);
+      setIsAdmin(nextIsAdmin);
+      setLoading(false);
+      setAuthReady(true);
+    }
+
+    void supabase.auth.getSession().then(({ data }) => {
+      void syncUserState(data.session?.user ?? null);
+    });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-
-      if (session?.user) {
-        fetchSolvedIds(session.user.id).then(setSolvedIds);
-      } else {
-        setSolvedIds(new Set());
-      }
+      void syncUserState(session?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const markSolved = useCallback(
@@ -113,7 +161,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, solvedIds, markSolved, unmarkSolved, signInWithGoogle, signOut }}
+      value={{
+        user,
+        loading,
+        authReady,
+        isAdmin,
+        solvedIds,
+        markSolved,
+        unmarkSolved,
+        signInWithGoogle,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

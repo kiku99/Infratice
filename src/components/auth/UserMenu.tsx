@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function UserMenu() {
-  const { user, solvedIds, signInWithGoogle, signOut, loading } = useAuth();
+  const { user, solvedIds, signInWithGoogle, signOut, loading, isAdmin } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -111,6 +111,20 @@ export default function UserMenu() {
             </svg>
             내 풀이 현황
           </Link>
+
+          {isAdmin && (
+            <Link
+              href="/admin/notices"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path d="M10.75 2.5a.75.75 0 0 0-1.5 0v1.024a6.752 6.752 0 0 0-4.219 2.337l-.724-.724a.75.75 0 1 0-1.06 1.06l.724.724A6.752 6.752 0 0 0 3.024 9.25H2a.75.75 0 0 0 0 1.5h1.024a6.752 6.752 0 0 0 2.337 4.219l-.724.724a.75.75 0 1 0 1.06 1.06l.724-.724a6.752 6.752 0 0 0 4.219 2.337V18a.75.75 0 0 0 1.5 0v-1.024a6.752 6.752 0 0 0 4.219-2.337l.724.724a.75.75 0 0 0 1.06-1.06l-.724-.724a6.752 6.752 0 0 0 2.337-4.219H18a.75.75 0 0 0 0-1.5h-1.024a6.752 6.752 0 0 0-2.337-4.219l.724-.724a.75.75 0 0 0-1.06-1.06l-.724.724A6.752 6.752 0 0 0 10.75 3.524V2.5Z" />
+                <path d="M9 7.25A1.75 1.75 0 0 1 10.75 5.5h1a1.75 1.75 0 1 1 0 3.5h-1A1.75 1.75 0 0 1 9 7.25Zm1.75-.25a.25.25 0 0 0 0 .5h1a.25.25 0 1 0 0-.5h-1ZM7.75 11a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 7.75 11Zm2.25 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 11Zm3 .75a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Z" />
+              </svg>
+              공지 관리
+            </Link>
+          )}
 
           {/* logout */}
           <button
