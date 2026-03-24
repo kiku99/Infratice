@@ -3,6 +3,12 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.7.0] — 2026-03-24
+
+### ✨ 새 기능
+- Add notice page ([`900ae2f`](https://github.com/kiku99/Infratice/commit/900ae2f857733a8df93246d12bb1b555cd9de35d))
+
+
 ## [1.6.0] — 2026-03-17
 
 ### 📦 기타
