@@ -14,7 +14,7 @@ export default async function ProblemsPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">문제 목록</h1>
-        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-500">
+        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
           키워드로 검색하거나 카테고리를 선택해 문제를 찾아보세요.
         </p>
       </div>

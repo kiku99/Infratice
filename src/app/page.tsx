@@ -53,7 +53,7 @@ export default async function HomePage() {
         })}
 
         {problems.length === 0 && (
-          <p className="text-center text-slate-500 dark:text-slate-500">
+          <p className="text-center text-slate-500 dark:text-slate-400">
             아직 등록된 문제가 없습니다.
           </p>
         )}
