@@ -11,20 +11,13 @@ interface Props {
 export default function MarkdownEditor({ problemId, onNoteRef }: Props) {
   const [value, setValue] = useState("");
   const valueRef = useRef(value);
+  valueRef.current = value;
 
   useEffect(() => {
     const saved = loadNote(problemId);
     setValue(saved);
-    valueRef.current = saved;
-  }, [problemId]);
-
-  useEffect(() => {
-    valueRef.current = value;
-  }, [value]);
-
-  useEffect(() => {
     onNoteRef?.(() => valueRef.current);
-  }, [onNoteRef]);
+  }, [problemId, onNoteRef]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
