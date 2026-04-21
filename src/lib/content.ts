@@ -11,11 +11,11 @@ import type { Category, DataBlock, Problem, ProblemMeta } from "@/types/problem"
 
 const CONTENT_DIR = path.join(process.cwd(), "content/problems");
 
-let highlighter: Highlighter | null = null;
+let highlighterPromise: Promise<Highlighter> | null = null;
 
-async function getShikiHighlighter(): Promise<Highlighter> {
-  if (!highlighter) {
-    highlighter = await createHighlighter({
+function getShikiHighlighter(): Promise<Highlighter> {
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighter({
       themes: ["github-dark"],
       langs: [
         "bash",
@@ -34,7 +34,7 @@ async function getShikiHighlighter(): Promise<Highlighter> {
       ],
     });
   }
-  return highlighter;
+  return highlighterPromise;
 }
 
 async function highlightCode(
@@ -108,18 +108,22 @@ export async function getAllProblems(): Promise<ProblemMeta[]> {
       .sort();
 
     for (const file of files) {
-      const raw = fs.readFileSync(path.join(dir, file), "utf-8");
-      const { data } = matter(raw);
-      const slug = file.replace(/\.md$/, "");
+      try {
+        const raw = fs.readFileSync(path.join(dir, file), "utf-8");
+        const { data } = matter(raw);
+        const slug = file.replace(/\.md$/, "");
 
-      problems.push({
-        id: data.id,
-        slug,
-        title: data.title,
-        category: data.category as Category,
-        difficulty: data.difficulty,
-        tags: data.tags ?? [],
-      });
+        problems.push({
+          id: data.id,
+          slug,
+          title: data.title,
+          category: data.category as Category,
+          difficulty: data.difficulty,
+          tags: data.tags ?? [],
+        });
+      } catch (e) {
+        console.error(`[getAllProblems] failed to read ${category}/${file}:`, e);
+      }
     }
   }
 
@@ -131,6 +135,11 @@ export async function getProblem(
   slug: string,
 ): Promise<Problem> {
   const filePath = path.join(CONTENT_DIR, category, `${slug}.md`);
+
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Problem not found: ${category}/${slug}`);
+  }
+
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
 
