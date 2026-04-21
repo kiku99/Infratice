@@ -3,6 +3,34 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.7.1] — 2026-04-21
+
+### ♻️  리팩터링
+- Extract formatNoticeDate to shared utility ([`75eda53`](https://github.com/kiku99/Infratice/commit/75eda532a0844c5e29d3bd145f02fd82c40b79c6))
+- Extract snapshot caching pattern to shared utility ([`29a19cb`](https://github.com/kiku99/Infratice/commit/29a19cb989c4484dc2b59718e9bc64164d47a45e))
+- Improve type safety in notice types and remove unsafe casts ([`0342dcd`](https://github.com/kiku99/Infratice/commit/0342dcddb8f0824492cda3856766127188eb278a))
+- Strengthen CategoryProgress types and add profile page description ([`97be950`](https://github.com/kiku99/Infratice/commit/97be950647c0c2d2cc862eab77f40434c2a7a1e1))
+- Simplify MarkdownEditor ref synchronization ([`a2973a6`](https://github.com/kiku99/Infratice/commit/a2973a6f02fe2c461830c8448c3a5705bc2eea7f))
+- Extract magic numbers to named constants ([`f6ed99a`](https://github.com/kiku99/Infratice/commit/f6ed99af61c7a2c5c1c0d74c072cc096aefb031e))
+- Replace unsafe type cast with explicit check in getTheme() ([`3d9b0fb`](https://github.com/kiku99/Infratice/commit/3d9b0fb7b1d1eb2e733fc977814bd38310361eb2))
+- Remove unnecessary Suspense wrappers ([`09973a2`](https://github.com/kiku99/Infratice/commit/09973a2bd8ea69e31013e1989f5d0a7843987f15))
+- Deduplicate notice query logic into shared helper ([`5135249`](https://github.com/kiku99/Infratice/commit/5135249926c0c71c9463f5abaafb58e37936fef3))
+- Remove unnecessary nullable from NoticeItem createdAt/updatedAt ([`76bc0bf`](https://github.com/kiku99/Infratice/commit/76bc0bf285f6f7dabb85a1a453864fe6da85e303))
+
+
+### ⚡ 성능 개선
+- Memoize AuthContext value to prevent unnecessary re-renders ([`9daf06d`](https://github.com/kiku99/Infratice/commit/9daf06d88291b384b80f94d4ece4dd4e49827cff))
+
+
+### 🐛 버그 수정
+- Resolve Shiki highlighter race condition and add error handling in content.ts ([`cad446a`](https://github.com/kiku99/Infratice/commit/cad446a46b4513d3b640290db68a57d584a818de))
+- Add aria-expanded to HintAccordion for accessibility ([`3a7d4e4`](https://github.com/kiku99/Infratice/commit/3a7d4e44cd7cb7dddb656e87221864b8ec3e415a))
+- Remove nested <main> tags for valid HTML ([`10dfcd5`](https://github.com/kiku99/Infratice/commit/10dfcd5fc100b58e8ffc40ffd5cf06d8d62759b2))
+- Handle missing problem with notFound() in dynamic route ([`73316d1`](https://github.com/kiku99/Infratice/commit/73316d1b44ffee07f761052799685ec6b6d7e69a))
+- Improve dark mode text contrast ([`c5c339d`](https://github.com/kiku99/Infratice/commit/c5c339d9fdb4f1a377df66f3d42792f8d5086fe1))
+- Restore required Suspense boundary for useSearchParams ([`b4fbeba`](https://github.com/kiku99/Infratice/commit/b4fbebaf5e17e7e391d065e9d658ec63c239d6ac))
+
+
 ## [1.7.0] — 2026-03-24
 
 ### ✨ 새 기능
