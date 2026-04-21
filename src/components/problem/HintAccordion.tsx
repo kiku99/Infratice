@@ -11,6 +11,7 @@ export default function HintAccordion({ hints }: { hints: string[] }) {
     <div className="rounded-lg border border-slate-200 dark:border-slate-800">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/50"
       >
         <span className="text-base">💡</span>
