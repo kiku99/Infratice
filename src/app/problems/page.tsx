@@ -12,7 +12,7 @@ export default async function ProblemsPage() {
   const problems = await getAllProblems();
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">문제 목록</h1>
         <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-500">
@@ -23,6 +23,6 @@ export default async function ProblemsPage() {
       <Suspense>
         <ProblemListClient problems={problems} />
       </Suspense>
-    </main>
+    </div>
   );
 }

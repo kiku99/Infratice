@@ -99,15 +99,15 @@ export default function NoticeAdminPage() {
 
   if (loading || !authReady) {
     return (
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
         <LoadingCard />
-      </main>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
         <section className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-900">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">공지 관리자</h1>
           <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
@@ -120,13 +120,13 @@ export default function NoticeAdminPage() {
             Google로 로그인
           </button>
         </section>
-      </main>
+      </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-8 dark:border-amber-900/60 dark:bg-amber-950/20">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">접근 권한이 없습니다</h1>
           <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
@@ -134,12 +134,12 @@ export default function NoticeAdminPage() {
             합니다.
           </p>
         </section>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
       <div className="mb-8">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-600 dark:text-amber-300">
           Admin
@@ -245,6 +245,6 @@ export default function NoticeAdminPage() {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

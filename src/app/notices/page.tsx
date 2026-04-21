@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function NoticesPage() {
   return (
-    <main className="mx-auto max-w-4xl px-4 pb-10 pt-5 sm:px-6 sm:pb-12 sm:pt-6">
+    <div className="mx-auto max-w-4xl px-4 pb-10 pt-5 sm:px-6 sm:pb-12 sm:pt-6">
       <section>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -31,6 +31,6 @@ export default function NoticesPage() {
           <NoticeList />
         </Suspense>
       </section>
-    </main>
+    </div>
   );
 }

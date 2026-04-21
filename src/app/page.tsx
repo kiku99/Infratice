@@ -13,7 +13,7 @@ export default async function HomePage() {
   const categories = [...new Set(problems.map((p) => p.category))];
 
   return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6">
       <LatestNoticeBanner />
       <HeroSection />
 
@@ -58,6 +58,6 @@ export default async function HomePage() {
           </p>
         )}
       </section>
-    </main>
+    </div>
   );
 }
