@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getAllProblems, getProblem } from "@/lib/content";
 import SplitView from "@/components/problem/SplitView";
 import ScenarioPanel from "@/components/problem/ScenarioPanel";
@@ -31,7 +32,13 @@ export async function generateMetadata({
 
 export default async function ProblemPage({ params }: PageProps) {
   const { category, slug } = await params;
-  const problem = await getProblem(category, slug);
+
+  let problem;
+  try {
+    problem = await getProblem(category, slug);
+  } catch {
+    notFound();
+  }
 
   return (
     <SplitView
