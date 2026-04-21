@@ -16,8 +16,8 @@ export interface NoticeItem {
   isPublished: boolean;
   publishedAt: string;
   expiresAt: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface NoticeMutationInput {
