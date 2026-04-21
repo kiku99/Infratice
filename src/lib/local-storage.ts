@@ -14,7 +14,8 @@ export function loadNote(problemId: string): string {
 
 export function getTheme(): "dark" | "light" {
   if (typeof window === "undefined") return "dark";
-  return (localStorage.getItem("theme") as "dark" | "light") ?? "dark";
+  const stored = localStorage.getItem("theme");
+  return stored === "light" ? "light" : "dark";
 }
 
 export function setTheme(theme: "dark" | "light"): void {
