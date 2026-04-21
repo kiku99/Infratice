@@ -10,11 +10,11 @@ function mapNoticeRow(row: NoticeRow): NoticeItem {
     id: row.id,
     title: row.title,
     summary: row.summary,
-    isPublished: row.is_published ?? false,
+    isPublished: row.is_published,
     publishedAt: row.published_at,
     expiresAt: row.expires_at,
-    createdAt: row.created_at ?? null,
-    updatedAt: row.updated_at ?? null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -33,13 +33,13 @@ export async function getLatestNotice(): Promise<NoticeItem | null> {
     .eq("is_published", true)
     .lte("published_at", nowIso)
     .order("published_at", { ascending: false })
-    .limit(NOTICE_FETCH_LIMIT);
+    .limit(NOTICE_FETCH_LIMIT)
+    .returns<NoticeRow[]>();
 
   if (error) throw error;
   if (!data) return null;
 
-  const activeNotice = (data as NoticeRow[]).find((row) => isActiveNotice(row, now));
-
+  const activeNotice = data.find((row) => isActiveNotice(row, now));
   return activeNotice ? mapNoticeRow(activeNotice) : null;
 }
 
@@ -53,12 +53,13 @@ export async function getPublishedNotices(): Promise<NoticeItem[]> {
     .eq("is_published", true)
     .lte("published_at", nowIso)
     .order("published_at", { ascending: false })
-    .limit(NOTICE_FETCH_LIMIT);
+    .limit(NOTICE_FETCH_LIMIT)
+    .returns<NoticeRow[]>();
 
   if (error) throw error;
   if (!data) return [];
 
-  return (data as NoticeRow[])
+  return data
     .filter((row) => isActiveNotice(row, now))
     .map(mapNoticeRow);
 }
@@ -78,12 +79,13 @@ export async function getAdminNotices(): Promise<NoticeItem[]> {
     .from("notices")
     .select(NOTICE_SELECT)
     .order("published_at", { ascending: false })
-    .limit(ADMIN_NOTICE_FETCH_LIMIT);
+    .limit(ADMIN_NOTICE_FETCH_LIMIT)
+    .returns<NoticeRow[]>();
 
   if (error) throw error;
   if (!data) return [];
 
-  return (data as NoticeRow[]).map(mapNoticeRow);
+  return data.map(mapNoticeRow);
 }
 
 export async function createNotice(input: NoticeMutationInput): Promise<NoticeItem> {
@@ -91,11 +93,11 @@ export async function createNotice(input: NoticeMutationInput): Promise<NoticeIt
     .from("notices")
     .insert(mapNoticeMutationInput(input))
     .select(NOTICE_SELECT)
-    .single();
+    .single<NoticeRow>();
 
   if (error) throw error;
 
-  return mapNoticeRow(data as NoticeRow);
+  return mapNoticeRow(data);
 }
 
 export async function updateNotice(id: string, input: NoticeMutationInput): Promise<NoticeItem> {
@@ -107,11 +109,11 @@ export async function updateNotice(id: string, input: NoticeMutationInput): Prom
     })
     .eq("id", id)
     .select(NOTICE_SELECT)
-    .single();
+    .single<NoticeRow>();
 
   if (error) throw error;
 
-  return mapNoticeRow(data as NoticeRow);
+  return mapNoticeRow(data);
 }
 
 export async function deleteNotice(id: string): Promise<void> {
