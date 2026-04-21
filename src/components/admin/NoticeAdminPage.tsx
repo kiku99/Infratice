@@ -2,21 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createNotice, deleteNotice, getAdminNotices, updateNotice } from "@/lib/notice";
+import { formatNoticeDatetime } from "@/lib/format";
 import type { NoticeItem, NoticeMutationInput } from "@/types/notice";
 import { useAuth } from "@/contexts/AuthContext";
 import NoticeEditor from "@/components/admin/NoticeEditor";
 
 type AdminListStatus = "loading" | "ready" | "error";
-
-function formatNoticeDate(value: string): string {
-  return new Date(value).toLocaleString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 function isExpiredNotice(notice: NoticeItem): boolean {
   if (!notice.expiresAt) return false;
@@ -245,7 +236,7 @@ export default function NoticeAdminPage() {
                       </p>
                     )}
                     <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                      게시일 {formatNoticeDate(notice.publishedAt)}
+                      게시일 {formatNoticeDatetime(notice.publishedAt)}
                     </p>
                   </button>
                 );

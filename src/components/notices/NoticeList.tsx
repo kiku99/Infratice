@@ -2,20 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { getPublishedNotices } from "@/lib/notice";
+import { formatNoticeDate } from "@/lib/format";
 import type { NoticeItem } from "@/types/notice";
 
 type NoticeListStatus = "idle" | "ready" | "error";
 
 let publishedNoticesSnapshot: NoticeItem[] | undefined;
 let publishedNoticesRequest: Promise<NoticeItem[]> | null = null;
-
-function formatNoticeDate(value: string): string {
-  return new Date(value).toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
 
 async function loadPublishedNoticesOnce(): Promise<NoticeItem[]> {
   if (publishedNoticesSnapshot !== undefined) {

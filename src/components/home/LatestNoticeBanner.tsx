@@ -3,20 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getLatestNotice } from "@/lib/notice";
+import { formatNoticeDate } from "@/lib/format";
 import type { NoticeItem } from "@/types/notice";
 
 type NoticeStatus = "idle" | "ready" | "hidden";
 
 let latestNoticeSnapshot: NoticeItem | null | undefined;
 let latestNoticeRequest: Promise<NoticeItem | null> | null = null;
-
-function formatNoticeDate(value: string): string {
-  return new Date(value).toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
 
 async function loadLatestNoticeOnce(): Promise<NoticeItem | null> {
   if (latestNoticeSnapshot !== undefined) {
