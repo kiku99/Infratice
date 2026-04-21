@@ -4,6 +4,8 @@ import { useState } from "react";
 import { buildPrompt } from "@/lib/prompt-builder";
 import type { DataBlock } from "@/types/problem";
 
+const TOAST_DURATION_MS = 3000;
+
 interface Props {
   scenarioText: string;
   dataBlocks: DataBlock[];
@@ -22,7 +24,7 @@ export default function CopyPromptButton({
     const prompt = buildPrompt(scenarioText, dataBlocks, note);
     await navigator.clipboard.writeText(prompt);
     setToast(true);
-    setTimeout(() => setToast(false), 3000);
+    setTimeout(() => setToast(false), TOAST_DURATION_MS);
   }
 
   return (

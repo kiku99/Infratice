@@ -34,6 +34,8 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
+const COPIED_FEEDBACK_MS = 2000;
+
 export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
   const [activeTab, setActiveTab] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -45,7 +47,7 @@ export default function TerminalBlock({ blocks }: { blocks: DataBlock[] }) {
   async function handleCopy() {
     await navigator.clipboard.writeText(active.content);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
   }
 
   return (
