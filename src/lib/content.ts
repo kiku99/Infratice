@@ -47,13 +47,19 @@ async function highlightCode(
   return hl.codeToHtml(code, { lang: resolvedLang, theme: "github-dark" });
 }
 
+// remark는 **bold** 닫기 직후에 유니코드 문자가 공백 없이 오면 강조를 인식하지 못함
+// (CommonMark right-flanking delimiter 규칙). 파싱 전에 해당 패턴을 HTML로 직접 변환.
+function fixBoldParsing(md: string): string {
+  return md.replace(/\*\*([^*]+)\*\*(?=[가-힣\u3000-\u9fff])/g, "<strong>$1</strong>");
+}
+
 async function markdownToHtml(md: string): Promise<string> {
   const result = await unified()
     .use(remarkParse)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeStringify)
-    .process(md);
+    .process(fixBoldParsing(md));
   return result.toString();
 }
 
