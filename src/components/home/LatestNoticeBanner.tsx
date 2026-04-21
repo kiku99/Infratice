@@ -4,69 +4,45 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getLatestNotice } from "@/lib/notice";
 import { formatNoticeDate } from "@/lib/format";
+import { createSnapshot } from "@/lib/snapshot";
 import type { NoticeItem } from "@/types/notice";
 
 type NoticeStatus = "idle" | "ready" | "hidden";
 
-let latestNoticeSnapshot: NoticeItem | null | undefined;
-let latestNoticeRequest: Promise<NoticeItem | null> | null = null;
-
-async function loadLatestNoticeOnce(): Promise<NoticeItem | null> {
-  if (latestNoticeSnapshot !== undefined) {
-    return latestNoticeSnapshot;
-  }
-
-  if (!latestNoticeRequest) {
-    latestNoticeRequest = getLatestNotice()
-      .then((notice) => {
-        latestNoticeSnapshot = notice;
-        return notice;
-      })
-      .catch((error) => {
-        latestNoticeRequest = null;
-        throw error;
-      });
-  }
-
-  return latestNoticeRequest;
-}
+const latestNotice = createSnapshot<NoticeItem | null>(getLatestNotice);
 
 export default function LatestNoticeBanner() {
-  const [notice, setNotice] = useState<NoticeItem | null>(latestNoticeSnapshot ?? null);
+  const cached = latestNotice.getSnapshot();
+  const [notice, setNotice] = useState<NoticeItem | null>(cached ?? null);
   const [status, setStatus] = useState<NoticeStatus>(() => {
-    if (latestNoticeSnapshot === undefined) return "idle";
-    return latestNoticeSnapshot ? "ready" : "hidden";
+    if (!latestNotice.hasSnapshot()) return "idle";
+    return cached ? "ready" : "hidden";
   });
 
   useEffect(() => {
-    if (latestNoticeSnapshot !== undefined) {
-      setNotice(latestNoticeSnapshot ?? null);
-      setStatus(latestNoticeSnapshot ? "ready" : "hidden");
+    if (latestNotice.hasSnapshot()) {
+      const snap = latestNotice.getSnapshot() ?? null;
+      setNotice(snap);
+      setStatus(snap ? "ready" : "hidden");
       return;
     }
 
     let isMounted = true;
 
-    async function loadNotice() {
-      try {
-        const latestNotice = await loadLatestNoticeOnce();
+    latestNotice
+      .loadOnce()
+      .then((result) => {
         if (!isMounted) return;
-
-        if (!latestNotice) {
+        if (!result) {
           setStatus("hidden");
           return;
         }
-
-        setNotice(latestNotice);
+        setNotice(result);
         setStatus("ready");
-      } catch {
-        if (isMounted) {
-          setStatus("hidden");
-        }
-      }
-    }
-
-    loadNotice();
+      })
+      .catch(() => {
+        if (isMounted) setStatus("hidden");
+      });
 
     return () => {
       isMounted = false;

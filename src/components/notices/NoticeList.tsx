@@ -3,63 +3,38 @@
 import { useEffect, useState } from "react";
 import { getPublishedNotices } from "@/lib/notice";
 import { formatNoticeDate } from "@/lib/format";
+import { createSnapshot } from "@/lib/snapshot";
 import type { NoticeItem } from "@/types/notice";
 
 type NoticeListStatus = "idle" | "ready" | "error";
 
-let publishedNoticesSnapshot: NoticeItem[] | undefined;
-let publishedNoticesRequest: Promise<NoticeItem[]> | null = null;
-
-async function loadPublishedNoticesOnce(): Promise<NoticeItem[]> {
-  if (publishedNoticesSnapshot !== undefined) {
-    return publishedNoticesSnapshot;
-  }
-
-  if (!publishedNoticesRequest) {
-    publishedNoticesRequest = getPublishedNotices()
-      .then((items) => {
-        publishedNoticesSnapshot = items;
-        return items;
-      })
-      .catch((error) => {
-        publishedNoticesRequest = null;
-        throw error;
-      });
-  }
-
-  return publishedNoticesRequest;
-}
+const publishedNotices = createSnapshot<NoticeItem[]>(getPublishedNotices);
 
 export default function NoticeList() {
-  const [notices, setNotices] = useState<NoticeItem[]>(publishedNoticesSnapshot ?? []);
+  const [notices, setNotices] = useState<NoticeItem[]>(publishedNotices.getSnapshot() ?? []);
   const [status, setStatus] = useState<NoticeListStatus>(() =>
-    publishedNoticesSnapshot !== undefined ? "ready" : "idle",
+    publishedNotices.hasSnapshot() ? "ready" : "idle",
   );
 
   useEffect(() => {
-    if (publishedNoticesSnapshot !== undefined) {
-      setNotices(publishedNoticesSnapshot);
+    if (publishedNotices.hasSnapshot()) {
+      setNotices(publishedNotices.getSnapshot()!);
       setStatus("ready");
       return;
     }
 
     let isMounted = true;
 
-    async function loadNotices() {
-      try {
-        const items = await loadPublishedNoticesOnce();
+    publishedNotices
+      .loadOnce()
+      .then((items) => {
         if (!isMounted) return;
-
         setNotices(items);
         setStatus("ready");
-      } catch {
-        if (isMounted) {
-          setStatus("error");
-        }
-      }
-    }
-
-    loadNotices();
+      })
+      .catch(() => {
+        if (isMounted) setStatus("error");
+      });
 
     return () => {
       isMounted = false;
