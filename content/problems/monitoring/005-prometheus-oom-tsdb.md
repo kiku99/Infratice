@@ -77,7 +77,7 @@ Message: feat: add distributed tracing labels to HTTP metrics
 
 ### 원인 분석
 
-이 문제는 **메트릭 카디널리티 폭발(cardinality explosion)**이 원인입니다. 여러 데이터를 교차 분석하면 전체 그림이 보입니다.
+이 문제는 **메트릭 카디널리티 폭발**(cardinality explosion)이 원인입니다. 여러 데이터를 교차 분석하면 전체 그림이 보입니다.
 
 1. **TSDB 상태**: head series가 1주 만에 312K → 2.85M으로 **약 9배 증가**했습니다.
 2. **카디널리티 분석**: `request_id` 라벨이 210만 개의 고유 값을 가지고 있으며, `http_request_duration_seconds_bucket` 메트릭 하나가 189만 개의 시계열을 차지합니다.
