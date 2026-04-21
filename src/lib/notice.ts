@@ -23,45 +23,31 @@ function isActiveNotice(row: NoticeRow, now: Date): boolean {
   return new Date(row.expires_at).getTime() > now.getTime();
 }
 
-export async function getLatestNotice(): Promise<NoticeItem | null> {
+async function fetchActiveNoticeRows(): Promise<{ rows: NoticeRow[]; now: Date }> {
   const now = new Date();
-  const nowIso = now.toISOString();
 
   const { data, error } = await supabase
     .from("notices")
     .select(NOTICE_SELECT)
     .eq("is_published", true)
-    .lte("published_at", nowIso)
+    .lte("published_at", now.toISOString())
     .order("published_at", { ascending: false })
     .limit(NOTICE_FETCH_LIMIT)
     .returns<NoticeRow[]>();
 
   if (error) throw error;
-  if (!data) return null;
 
-  const activeNotice = data.find((row) => isActiveNotice(row, now));
-  return activeNotice ? mapNoticeRow(activeNotice) : null;
+  return { rows: (data ?? []).filter((row) => isActiveNotice(row, now)), now };
+}
+
+export async function getLatestNotice(): Promise<NoticeItem | null> {
+  const { rows } = await fetchActiveNoticeRows();
+  return rows.length > 0 ? mapNoticeRow(rows[0]) : null;
 }
 
 export async function getPublishedNotices(): Promise<NoticeItem[]> {
-  const now = new Date();
-  const nowIso = now.toISOString();
-
-  const { data, error } = await supabase
-    .from("notices")
-    .select(NOTICE_SELECT)
-    .eq("is_published", true)
-    .lte("published_at", nowIso)
-    .order("published_at", { ascending: false })
-    .limit(NOTICE_FETCH_LIMIT)
-    .returns<NoticeRow[]>();
-
-  if (error) throw error;
-  if (!data) return [];
-
-  return data
-    .filter((row) => isActiveNotice(row, now))
-    .map(mapNoticeRow);
+  const { rows } = await fetchActiveNoticeRows();
+  return rows.map(mapNoticeRow);
 }
 
 function mapNoticeMutationInput(input: NoticeMutationInput) {
