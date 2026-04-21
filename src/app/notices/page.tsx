@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import NoticeList from "@/components/notices/NoticeList";
 import NoticePageActions from "@/components/notices/NoticePageActions";
@@ -27,9 +26,7 @@ export default function NoticesPage() {
       </section>
 
       <section className="mt-8">
-        <Suspense fallback={null}>
-          <NoticeList />
-        </Suspense>
+        <NoticeList />
       </section>
     </div>
   );
