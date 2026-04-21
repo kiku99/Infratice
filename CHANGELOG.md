@@ -3,6 +3,18 @@
 > 이 파일은 릴리즈 시 자동으로 생성됩니다. 직접 수정하지 마세요.
 > 커밋 메시지는 [Conventional Commits](https://www.conventionalcommits.org/ko/) 형식을 따릅니다.
 
+## [1.8.0] — 2026-04-21
+
+### 🐛 버그 수정
+- Resolve bold markdown not rendering in monitoring-005 solution ([`4402237`](https://github.com/kiku99/Infratice/commit/440223763e00410e7b476e50d8970f723514c5d3))
+- Handle bold markdown followed by CJK characters in parser ([`c1165c9`](https://github.com/kiku99/Infratice/commit/c1165c91c5af89840e260a7991b8ce660723eb67))
+
+
+### 📦 기타
+- Add monitoring category problems (001-005) ([`7aaac60`](https://github.com/kiku99/Infratice/commit/7aaac60fe3a477159ff6343ae54a5e69913d5111))
+- Add kubernetes problems 024-033 ([`81e282e`](https://github.com/kiku99/Infratice/commit/81e282efec601269a592ca65bbd72ffd6f55c943))
+
+
 ## [1.7.1] — 2026-04-21
 
 ### ♻️  리팩터링
