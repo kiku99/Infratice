@@ -13,7 +13,7 @@ const BAR_COLORS: Record<Category, string> = {
 };
 
 interface Props {
-  categoryCounts: Record<string, number>;
+  categoryCounts: Partial<Record<Category, number>>;
 }
 
 export default function CategoryProgress({ categoryCounts }: Props) {
@@ -48,17 +48,22 @@ export default function CategoryProgress({ categoryCounts }: Props) {
     );
   }
 
-  const categories = Object.keys(categoryCounts) as Category[];
+  const categories = (Object.keys(categoryCounts) as Category[]).filter(
+    (cat) => (categoryCounts[cat] ?? 0) > 0,
+  );
   const totalProblems = Object.values(categoryCounts).reduce(
-    (a, b) => a + b,
+    (a, b) => a + (b ?? 0),
     0,
   );
   const totalSolved = solvedIds.size;
 
-  const solvedByCategory: Record<string, number> = {};
+  const solvedByCategory: Partial<Record<Category, number>> = {};
   for (const id of solvedIds) {
-    const cat = id.substring(0, id.lastIndexOf("-"));
-    solvedByCategory[cat] = (solvedByCategory[cat] || 0) + 1;
+    const dashIdx = id.lastIndexOf("-");
+    if (dashIdx === -1) continue;
+    const cat = id.substring(0, dashIdx) as Category;
+    if (!(cat in categoryCounts)) continue;
+    solvedByCategory[cat] = (solvedByCategory[cat] ?? 0) + 1;
   }
 
   return (
@@ -97,8 +102,8 @@ export default function CategoryProgress({ categoryCounts }: Props) {
       <div className="grid gap-4 sm:grid-cols-2">
         {categories.map((cat) => {
           const meta = CATEGORY_META[cat];
-          const total = categoryCounts[cat];
-          const solved = solvedByCategory[cat] || 0;
+          const total = categoryCounts[cat] ?? 0;
+          const solved = solvedByCategory[cat] ?? 0;
           const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
 
           return (
