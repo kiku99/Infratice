@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getAllProblems } from "@/lib/content";
 import ProblemListClient from "@/components/problems/ProblemListClient";
@@ -19,7 +20,9 @@ export default async function ProblemsPage() {
         </p>
       </div>
 
-      <ProblemListClient problems={problems} />
+      <Suspense>
+        <ProblemListClient problems={problems} />
+      </Suspense>
     </div>
   );
 }
